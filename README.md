@@ -1,2 +1,3 @@
 # warframe-batch-tools
-warframe-batch-tools
+
+`.bat`-ништяки для warframe
