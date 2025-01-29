@@ -27,5 +27,5 @@ echo "%warframe%"[0m
 pause>nul&exit
 )
 start "Tools\" "Tools\Launcher.exe"
-:: Source: https://discord.gg/2jJ3Qn4
+:: Source: https://github.com/N3M1X10/warframe-batch-tools
 exit

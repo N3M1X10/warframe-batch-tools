@@ -4,7 +4,7 @@
 - `restart-warframe-launcher.bat` - Перезапустить Warframe
 - `restart-warframe-and-aleca-frame.bat` - Перезапустить Warframe и AlecaFrame
 
-## Steam
+## Steam (запуск без вызова steam)
 > [!warning]
 > Укажите свой путь к Warframe перед запуском этих файлов!
 > - `restart-warframe-steam.bat` - Перезапустить Warframe если WF скачан со Steam

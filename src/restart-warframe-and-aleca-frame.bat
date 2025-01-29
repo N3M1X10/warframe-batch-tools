@@ -81,8 +81,7 @@ echo I smelled it !!!
 ::warframe start (starting with separated client launcher)
 cd /d "%warframe%"
 start "Tools\" "Tools\Launcher.exe"
-:: Source: https://discord.gg/2jJ3Qn4
-
+:: Source: https://github.com/N3M1X10/warframe-batch-tools
 
 :end
 exit

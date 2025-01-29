@@ -77,6 +77,7 @@ cd /d "%warframe%"
 start "Tools\" "Tools\Launcher.exe" ^
 -cluster:public -registry:Steam
 >nul timeout /t 2 /nobreak
+:: Source: https://github.com/N3M1X10/warframe-batch-tools
 
 :end
 exit
