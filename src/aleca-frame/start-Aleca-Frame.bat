@@ -1,2 +1,7 @@
 @echo off
-start "G:\Program Files (x86)\Tools\overwolf\" "G:\Program Files (x86)\Tools\overwolf\OverwolfLauncher.exe" -launchapp afmcagbpgggkpdkokjhjkllpegnadmkignlonpjm -from-startmenu"
+:: Overwolf Path
+set overwolf=G:\Program Files (x86)\Tools\overwolf\
+
+cd /d "%overwolf%"
+start "" "%overwolf%OverwolfLauncher.exe" -launchapp afmcagbpgggkpdkokjhjkllpegnadmkignlonpjm -from-startmenu"
+exit

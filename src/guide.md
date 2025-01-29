@@ -17,7 +17,6 @@
 # \aleca-frame\
 > [!warning]
 > Укажите свой путь к Overwolf перед запуском этих файлов!
-> - `restart-Aleca-Frame.bat` - Перезапустить AlecaFrame
 > - `start-Aleca-Frame.bat` - Запустить AlecaFrame
 
 - `kill-overwolf.bat` - Закрыть OW
