@@ -7,6 +7,11 @@
 ## Steam (запуск без вызова steam)
 > [!warning]
 > Укажите свой путь к Warframe перед запуском этих файлов!
+> ```
+> :: Set the Warframe directory path !!! (without quotes)
+> set warframe=C:\Program Files (x86)\Steam\steamapps\common\Warframe\
+> ```
+> 
 > - `restart-warframe-steam.bat` - Перезапустить Warframe если WF скачан со Steam
 > - `restart-warframe-and-aleca-frame-steam.bat` - Перезапустить Warframe и AlecaFrame если WF скачан со Steam
 
