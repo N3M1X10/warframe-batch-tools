@@ -2,7 +2,7 @@
 
 ## Отдельный лаунчер Warframe
 - `restart-warframe-launcher.bat` - Перезапустить Warframe
-- `restart-warframe-and-aleca-frame.bat` - Перезапустить Warframe и AlecaFrame
+- `restart-warframe-and-aleca-frame.bat` - Перезапустить Warframe и AlecaFrame (OverWolf будет перезапущен!)
 
 ## Steam (запуск без вызова steam)
 > [!warning]
@@ -13,10 +13,10 @@
 > ```
 > 
 > - `restart-warframe-steam.bat` - Перезапустить Warframe если WF скачан со Steam
-> - `restart-warframe-and-aleca-frame-steam.bat` - Перезапустить Warframe и AlecaFrame если WF скачан со Steam
+> - `restart-warframe-and-aleca-frame-steam.bat` - Перезапустить Warframe и AlecaFrame (OverWolf будет перезапущен!) если WF скачан со Steam
 
 ## Shutdown
-- `kill-warframe-and-overwolf.bat` - Закрыть Warframe и AlecaFrame
+- `kill-warframe-and-overwolf.bat` - Закрыть Warframe и OverWolf
 - `kill-warframe.bat` - Закрыть Warframe
 
 # \aleca-frame\
