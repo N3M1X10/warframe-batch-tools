@@ -4,7 +4,7 @@ chcp 65001>nul
 :: Options
 
 :: overwolf path
-set overwolf=G:\Program Files (x86)\Tools\overwolf\
+set overwolf=C:\Program Files (x86)\Overwolf
 
 :: warframe default launcher's directory
 set warframe=%LocalAppData%\Warframe\Downloaded\Public
