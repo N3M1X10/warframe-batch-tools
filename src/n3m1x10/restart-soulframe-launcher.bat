@@ -1,6 +1,6 @@
 @echo off
 chcp 65001>nul
-title Warframe (Launcher) : Restart
+title Soulframe (Launcher) : Restart
 setlocal
 
 :: Restart with Admin Rights and minimize the window
@@ -12,18 +12,18 @@ if "%arg%" == "admin" (
     exit /b
 )
 
-::warframe kill
->nul taskkill /f /im "Warframe.x64.exe" /t
+::kill
+>nul taskkill /f /im "Soulframe.x64.exe" /t
 >nul timeout /t 1 /nobreak
 
-::warframe start (starting with separated client launcher)
-set warframe=%LocalAppData%\Warframe\Downloaded\Public
-cd /d "%warframe%"
+::start (starting with separated client launcher)
+set soulframe=%LocalAppData%\Soulframe\Downloaded\Public
+cd /d "%soulframe%"
 IF NOT EXIST "Tools\Launcher.exe" (
 cls
-echo [101;93m! Warframe launcher doesn't exist, unable to continue
-echo Make sure that the Warframe launcher exists in: 
-echo "%warframe%"[0m
+echo [101;93m! Soulframe launcher doesn't exist, unable to continue
+echo Make sure that the soulframe launcher exists in: 
+echo "%soulframe%"[0m
 pause>nul&exit
 )
 start "Tools\" "Tools\Launcher.exe"
