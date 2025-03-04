@@ -13,12 +13,12 @@
 > Warframe
 > ```
 > :: Set the Warframe directory path !!! (without quotes)
-> set warframe=C:\Program Files (x86)\Steam\steamapps\common\Warframe\
+> set warframe=C:\Program Files (x86)\Steam\steamapps\common\Warframe
 > ```
 >
 > Overwolf
 > ```
-> set overwolf=C:\Program Files\overwolf\
+> set overwolf=C:\Program Files\overwolf
 > ```
 > 
 > - `restart-warframe-steam.bat` - Перезапустить Warframe если WF скачан со Steam
