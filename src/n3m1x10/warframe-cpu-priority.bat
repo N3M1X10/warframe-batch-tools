@@ -4,10 +4,10 @@ title Warframe : Set CPU Priority
 setlocal
 
 ::# OPTIONS
-:: ## Set CPU Priority on Launch
+:: ## Change CPU Priority on Launch
 :: - Possible values: "idle", "low", "BelowNormal", "normal", "AboveNormal", "HighPriority", "realtime"
 :: - Default: normal
-set priority=high
+set priority=normal
 
 :: Restart with Admin Rights and minimize the window
 set "arg=%1"
