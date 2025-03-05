@@ -12,6 +12,11 @@ if "%arg%" == "admin" (
     exit /b
 )
 
+:: Change CPU Priority on Launch [1 / 0] (read guide.md)
+:: WARNING! UNSTABLE!
+:: PLEASE, TEST THIS FEATURE AND LEAVE A REVIEW
+set change_priority=0
+
 ::warframe kill
 >nul taskkill /f /im "Warframe.x64.exe" /t
 >nul timeout /t 1 /nobreak
@@ -27,5 +32,11 @@ echo "%warframe%"[0m
 pause>nul&exit
 )
 start "Tools\" "Tools\Launcher.exe"
+
+if %change_priority%==1 (
+cd /d "%~dp0"
+start "" "warframe-cpu-priority.bat"
+)
+
 :: Source: https://github.com/N3M1X10/warframe-batch-tools
 exit
