@@ -3,6 +3,13 @@ chcp 65001>nul
 title Warframe (Launcher) : Restart
 setlocal
 
+::# OPTIONS
+
+:: Change CPU Priority on Launch [1 / 0] (read guide.md)
+:: WARNING! UNSTABLE!
+:: PLEASE, TEST THIS FEATURE AND LEAVE A REVIEW
+set change_priority=0
+
 :: Restart with Admin Rights and minimize the window
 set "arg=%1"
 if "%arg%" == "admin" (
@@ -11,11 +18,6 @@ if "%arg%" == "admin" (
     powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Minimized"
     exit /b
 )
-
-:: Change CPU Priority on Launch [1 / 0] (read guide.md)
-:: WARNING! UNSTABLE!
-:: PLEASE, TEST THIS FEATURE AND LEAVE A REVIEW
-set change_priority=0
 
 ::warframe kill
 >nul taskkill /f /im "Warframe.x64.exe" /t

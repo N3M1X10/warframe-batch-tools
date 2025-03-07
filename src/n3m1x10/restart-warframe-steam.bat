@@ -2,10 +2,15 @@
 chcp 65001>nul
 title Warframe (Steam) : restart
 
+::# OPTIONS
 
 :: Set the Warframe directory path !!! (without quotes)
 set warframe=C:\Program Files (x86)\Steam\steamapps\common\Warframe\
 
+:: Change CPU Priority on Launch [1 / 0] (read guide.md)
+:: WARNING! UNSTABLE!
+:: PLEASE, TEST THIS FEATURE AND LEAVE A REVIEW
+set change_priority=0
 
 :: Restart with Admin Rights and minimize the window
 set "arg=%1"
@@ -15,11 +20,6 @@ if "%arg%" == "admin" (
     powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Minimized"
     exit /b
 )
-
-:: Change CPU Priority on Launch [1 / 0] (read guide.md)
-:: WARNING! UNSTABLE!
-:: PLEASE, TEST THIS FEATURE AND LEAVE A REVIEW
-set change_priority=0
 
 ::warframe kill
 >nul taskkill /f /im "Launcher.exe" /t

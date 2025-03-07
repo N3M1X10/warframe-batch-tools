@@ -54,12 +54,12 @@ set change_priority=1
 - `warframe-cpu-priority.bat` - этот пакет отвечает за изменение приоритета процесса Warframe
 
 Затем в `warframe-cpu-priority.bat` измените переменную `priority` на нужное вам значение
-- Разрешённые значения: `idle`, `low`, `BelowNormal`, `normal`, `AboveNormal`, `HighPriority`, `realtime`
+- Разрешённые значения: `idle`, `low`, `BelowNormal`, `normal`, `AboveNormal`, `high`, `realtime`
 
 ```
 ::# OPTIONS
 :: ## Change CPU Priority on Launch
-:: - Possible values: "idle", "low", "BelowNormal", "normal", "AboveNormal", "HighPriority", "realtime"
+:: - Possible values: "idle", "low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"
 :: - Default: normal
 set priority=high
 ```
