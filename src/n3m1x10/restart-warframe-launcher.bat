@@ -20,6 +20,7 @@ if "%arg%" == "admin" (
 )
 
 ::warframe kill
+rem >nul taskkill /f /im "Launcher.exe" /t
 >nul taskkill /f /im "Warframe.x64.exe" /t
 >nul timeout /t 1 /nobreak
 

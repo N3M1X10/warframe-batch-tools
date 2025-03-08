@@ -1,11 +1,12 @@
 @echo off
 chcp 65001>nul
-title Warframe (Steam) : restart
+title Warframe (Steam) : Restart
+setlocal
 
 ::# OPTIONS
 
 :: Set the Warframe directory path !!! (without quotes)
-set warframe=C:\Program Files (x86)\Steam\steamapps\common\Warframe\
+set warframe=
 
 :: Change CPU Priority on Launch [1 / 0] (read guide.md)
 :: WARNING! UNSTABLE!
@@ -22,11 +23,19 @@ if "%arg%" == "admin" (
 )
 
 ::warframe kill
->nul taskkill /f /im "Launcher.exe" /t
+rem >nul taskkill /f /im "Launcher.exe" /t
 >nul taskkill /f /im "Warframe.x64.exe" /t
+>nul timeout /t 1 /nobreak
 
 ::warframe start (starting without steam)
 cd /d "%warframe%"
+IF NOT EXIST "Tools\Launcher.exe" (
+cls
+echo [101;93m! Warframe launcher doesn't exist, unable to continue
+echo Make sure that the Warframe launcher exists in: 
+echo "%warframe%"[0m
+pause>nul&exit
+)
 start "Tools\" "Tools\Launcher.exe" ^
 -cluster:public -registry:Steam
 
