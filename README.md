@@ -2,7 +2,7 @@
 
 `.bat`-ништяки для warframe
 
-## Быстрый перезапуск Warframe от [n3m1x10](https://github.com/N3M1X10)
+## Быстрый перезапуск Warframe и прочие функции от [n3m1x10](https://github.com/N3M1X10)
 > [!note]
 > **Читаем инструкции: [src/n3m1x10/guide.md](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/guide.md)**
 
