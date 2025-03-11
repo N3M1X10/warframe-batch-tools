@@ -4,14 +4,22 @@ title Warframe (Steam) : Restart
 setlocal
 
 ::# OPTIONS
+:: If you don't know what they mean - read https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/guide.md
 
-:: Set the Warframe directory path !!! (without quotes)
+:: Set the Warframe directory path !!! (read guide.md)
 set warframe=
+
+:: Set whether Steam will be called or not [1 / 0] (read guide.md)
+:: default=1
+set without_steam=1
 
 :: Change CPU Priority on Launch [1 / 0] (read guide.md)
 :: WARNING! UNSTABLE!
 :: PLEASE, TEST THIS FEATURE AND LEAVE A REVIEW
+:: default=0
 set change_priority=0
+
+:: END OF OPTIONS
 
 :: Restart with Admin Rights and minimize the window
 set "arg=%1"
@@ -36,12 +44,20 @@ echo Make sure that the Warframe launcher exists in:
 echo "%warframe%"[0m
 pause>nul&exit
 )
+
+:: Launch without steam if in options "set without_steam=1"
+if %without_steam%==1 (
+cd /d "%warframe%"
 start "Tools\" "Tools\Launcher.exe" ^
 -cluster:public -registry:Steam
+) else (
+rem start "Tools\" "Tools\Launcher.exe"
+explorer "steam://rungameid/230410"
+)
 
+:: Call CPU Priority batch if you choose "set change_priority=1"
 if %change_priority%==1 (
-cd /d "%~dp0"
-start "" "warframe-cpu-priority.bat"
+cd /d "%~dp0" & start "" "warframe-cpu-priority.bat"
 )
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools
