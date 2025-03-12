@@ -4,10 +4,13 @@ title Warframe : Set CPU Priority
 setlocal
 
 ::# OPTIONS
+
 :: ## Change CPU Priority on Launch
 :: - Possible values: "idle", "low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"
 :: - Default: normal
 set priority=normal
+
+::END OF OPTIONS
 
 :: Restart with Admin Rights and minimize the window
 set "arg=%1"
@@ -22,42 +25,47 @@ if "%arg%" == "admin" (
 
 :: cycle limitation
 set cycle_amount=120
-
-set cycle_count=1
+:: Executable name we looking for
 set process=Warframe.x64.exe
-:first-cycle
-cls
-:: When you start Warframe in launcher he create "Warframe.x64.exe" task for a short period of time
-:: This is a crutch method to solve the automation problem (because im a dumb)
-echo ! Waiting launcher's false start . . .
-echo Viewing Attempts: %cycle_count%
->nul timeout /t 5 /nobreak
-:: checking tasklist for selected executable
-tasklist |>nul findstr /b /l /i /c:%process% && goto check-cycle
-:: exit when limit is reached
-if %cycle_count% geq %cycle_amount% (exit)
-:: increase the counter by one step
-set /a cycle_count=%cycle_count%+1
-echo.
-goto first-cycle
-
-:check-cycle
+:: Variable that makes this cycle doesn't endless, for performance reason
 set cycle_count=1
+
 :cycle
 cls
-echo ! Waiting for the Warframe launch to change the priority of the process . . .
-echo Viewing Attempts: %cycle_count%
->nul timeout /t 3 /nobreak
-tasklist |>nul findstr /b /l /i /c:%process% && goto set-priority
+echo ! Waiting for the "%process%" launch to change the priority of the process . . .
+echo Cycle Limitation. After %cycle_amount% attempts batch will stopped. Viewing Attempts: %cycle_count%
+
 if %cycle_count% geq %cycle_amount% (exit)
 set /a cycle_count=%cycle_count%+1
-echo.
+
+:: My new, more thoughtful way to avoid failures is to divide the cycle into several stages of checks
+:: It's still bad. But it's definitely more reliable than the previous version
+:check-step1
+echo Step 1
+>nul timeout /t 4 /nobreak
+tasklist |>nul findstr /b /l /i /c:%process% && goto check-step2
+goto cycle
+:check-step2
+echo Step 2
+>nul timeout /t 4 /nobreak
+tasklist |>nul findstr /b /l /i /c:%process% && goto check-step3
+goto cycle
+:check-step3
+echo Step 3
+>nul timeout /t 5 /nobreak
+tasklist |>nul findstr /b /l /i /c:%process% && goto check-step4
+goto cycle
+:check-step4
+echo Step 4
+>nul timeout /t 6 /nobreak
+tasklist |>nul findstr /b /l /i /c:%process% && goto set-priority
 goto cycle
 
 :: Powershell command that sets priority for warframe
 :set-priority
 powershell (Get-Process -name "Warframe.x64").PriorityClass = [System.Diagnostics.ProcessPriorityClass]::%priority%
 echo ! Changing priority complete
+>nul timeout /t 1 /nobreak
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools
 exit
