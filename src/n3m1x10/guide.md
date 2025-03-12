@@ -31,26 +31,26 @@
 ## 📁Файлы
 
 ### **Батники для Steam**
-- [`restart-warframe-steam.bat`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/restart-warframe-steam.bat) - Перезапустить Warframe если WF скачан со Steam
-- `restart-warframe-and-aleca-frame-steam.bat` - Перезапустить Warframe и AlecaFrame (Overwolf будет перезапущен!) если WF скачан со Steam
+- [**`restart-warframe-steam.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/restart-warframe-steam.bat) - Перезапустить только Warframe
+- `restart-warframe-and-aleca-frame-steam.bat` - Перезапустить Warframe и AlecaFrame (Overwolf будет перезапущен!)
 
 ### **Батники для отдельного лаунчера**
-- [`restart-warframe-launcher.bat`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/restart-warframe-launcher.bat) - Перезапустить Warframe
+- [**`restart-warframe-launcher.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/restart-warframe-launcher.bat) - Перезапустить Warframe
 - `restart-warframe-and-aleca-frame.bat` - Перезапустить Warframe и AlecaFrame (Overwolf будет перезапущен!) 
 
 ### 🔵AlecaFrame
 > [!warning]
 > Укажите свой путь к Overwolf перед запуском этого файла!
-> - [`start-Aleca-Frame.bat`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/aleca-frame/start-Aleca-Frame.bat) - Запустить AlecaFrame
-- [`kill-overwolf.bat`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/aleca-frame/kill-overwolf.bat) - Закрыть Overwolf
+> - [**`start-Aleca-Frame.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/aleca-frame/start-Aleca-Frame.bat) - Запустить AlecaFrame
+- [**`kill-overwolf.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/aleca-frame/kill-overwolf.bat) - Закрыть Overwolf
 
 ### ❌Shutdown
-- [`kill-warframe-and-overwolf.bat`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/kill-warframe-and-overwolf.bat) - Закрыть Warframe и Overwolf
-- [`kill-warframe.bat`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/kill-warframe.bat) - Завершить процесс `Warframe.x64.exe`
+- [**`kill-warframe-and-overwolf.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/kill-warframe-and-overwolf.bat) - Закрыть Warframe и Overwolf
+- [**`kill-warframe.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/kill-warframe.bat) - Завершить процесс `Warframe.x64.exe`
 
 ### ⚠️Экспериментальные опции
-- [`warframe-cpu-priority.bat`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/warframe-cpu-priority.bat) - этот пакет отвечает за изменение приоритета процесса Warframe. Если данного пакета не будет в директории с пакетом перезапуска - функция не сработает.
-- [`src/n3m1x10/aleca-frame/doubtful`](https://github.com/N3M1X10/warframe-batch-tools/tree/main/src/n3m1x10/aleca-frame/doubtful) - сомнительные и не особо нужные функции в разделе с пакетами для AlecaFrame (возможно скоро их не станет)
+- [**`warframe-cpu-priority.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/warframe-cpu-priority.bat) - этот пакет отвечает за изменение приоритета процесса Warframe. Если данного пакета не будет в директории с пакетом перезапуска - функция не сработает.
+- [**`src/n3m1x10/aleca-frame/doubtful`**](https://github.com/N3M1X10/warframe-batch-tools/tree/main/src/n3m1x10/aleca-frame/doubtful) - сомнительные и не особо нужные функции в разделе с пакетами для AlecaFrame (возможно скоро их не станет)
 
 ## ⚙️Change CPU Priority on Launch
 Установить для процесса Warframe приоритет CPU, при каждом запуске игры через пакеты перезапуска этого репозитория.
@@ -61,7 +61,7 @@
 > [!warning]
 > **Экспериментальная функция**
 > 
-> Пожалуйста, протестируйте эту функцию и [оставьте отзыв](https://github.com/N3M1X10/warframe-batch-tools/issues)
+> Пожалуйста, протестируйте эту функцию и [**оставьте отзыв**](https://github.com/N3M1X10/warframe-batch-tools/issues)
 
 1. Для включения опции, в пакете перезапуска (например `restart-warframe-launcher.bat`) - найдите переменную `change_priority` и установите `1`
 ```
