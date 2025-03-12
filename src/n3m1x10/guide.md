@@ -3,19 +3,21 @@
 ## Перезапуск для Steam версии (запуск без вызова Steam)
 
 >[!tip]
->Для открытия файла в режиме редактирования: ПКМ -> "Изменить"
+> - Чтобы скачать файлы: [Ищем такую кнопку](https://github.com/user-attachments/assets/c0169211-4266-4d54-b594-22e762d0938b). А за подробностями [Сюда](https://docs.github.com/ru/get-started/start-your-journey/downloading-files-from-github) или [Сюда](https://blog.skillfactory.ru/kak-skachivat-s-github/)
+> - Для редактирования скачанного на вашем ПК файла: **`ПКМ` -> `Изменить`**
+
 
 > [!warning]
-> ### Укажите **свой** путь к Warframe перед запуском этих файлов!
+> Укажите **свой** путь к Warframe перед запуском этих файлов!
 >
-> ### Примеры:
+> Примеры:
 > 
-> Для Warframe
+> - Для Warframe
 > ```
 > set warframe=C:\Program Files (x86)\Steam\steamapps\common\Warframe
 > ```
 >
-> Для Overwolf
+> - Для Overwolf
 > ```
 > set overwolf=C:\Program Files\overwolf
 > ```
