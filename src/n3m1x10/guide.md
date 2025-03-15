@@ -86,3 +86,6 @@ set change_priority=1
 ```
 set priority=high
 ```
+
+## 🐞Известные ошибки
+-  [Ошибки присвоения приоритета процесса](https://github.com/N3M1X10/warframe-batch-tools/issues/2)
