@@ -7,6 +7,6 @@
 > **Читаем инструкции: [`src/n3m1x10/guide.md`](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/guide.md)**
 
 ### Путеводитель
-- Пакет перезапуска [**Для отдельного лаунчера**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/restart-warframe-launcher.bat)
-- [Для Steam версии (**перезапуск без вызова Steam**)](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/restart-warframe-steam.bat)
-- Также появился [**батник перезапуска для Soulframe**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/restart-soulframe-launcher.bat)
+- Пакет перезапуска [**Для отдельного лаунчера**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/warframe/restart-warframe-launcher.bat)
+- [Для Steam версии (**перезапуск без вызова Steam**)](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/warframe/restart-warframe-steam.bat)
+- Также появился [**батник перезапуска для Soulframe**](https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/soulframe/restart-soulframe-launcher.bat)
