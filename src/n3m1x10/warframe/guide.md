@@ -13,13 +13,13 @@
 > Укажите **свой** путь к Warframe перед запуском этих файлов!
 >
 > Пример:
-> ```
+> ```bat
 > set warframe=C:\Program Files (x86)\Steam\steamapps\common\Warframe
 > ```
 
 > [!tip]
 > ### Если вам требуется запускать Warframe через Steam
->```
+>```bat
 >set without_steam=0
 >```
 
@@ -35,7 +35,7 @@
 > [!warning]
 > Укажите свой путь к Overwolf перед запуском этого файла!
 > Пример:
-> ```
+> ```bat
 > set overwolf=C:\Program Files\overwolf
 > ```
 > - [**`start-Aleca-Frame.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/n3m1x10/warframe/aleca-frame/start-Aleca-Frame.bat) - Запустить AlecaFrame
@@ -60,7 +60,7 @@
 > Пожалуйста, протестируйте эту функцию и [**оставьте отзыв**](https://github.com/N3M1X10/warframe-batch-tools/issues)
 
 1. Для включения опции, в пакете перезапуска (например `restart-warframe-launcher.bat`) - найдите переменную `change_priority` и установите `1`
-```
+```bat
 set change_priority=1
 ```
 
@@ -79,6 +79,6 @@ set change_priority=1
 > - `realtime` - Реального времени
 
 Пример:
-```
+```bat
 set priority=high
 ```
