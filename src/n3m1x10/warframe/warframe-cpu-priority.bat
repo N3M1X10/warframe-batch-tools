@@ -68,4 +68,5 @@ echo ! Changing priority complete
 >nul timeout /t 1 /nobreak
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools
+endlocal
 exit
