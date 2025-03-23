@@ -12,7 +12,7 @@ set priority=normal
 
 ::END OF OPTIONS
 
-:: Restart with Admin Rights and minimize the window
+:: Restart with Admin Rights and hide the window
 set "arg=%1"
 if "%arg%" == "admin" (
     echo ! Restarted with admin rights and hidden
