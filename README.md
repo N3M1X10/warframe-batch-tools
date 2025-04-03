@@ -9,4 +9,6 @@
 > - **Для Soulframe: [`src/n3m1x10/soulframe/guide.md`](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/n3m1x10/soulframe/guide.md)**
 
 > [!tip]
-> Скачать репозиторий: [Download ZIP](https://github.com/N3M1X10/warframe-batch-tools/archive/refs/heads/master.zip)
+> Скачивание:
+> - [Скачать текущий репозиторий (ZIP)](https://github.com/N3M1X10/warframe-batch-tools/archive/refs/heads/master.zip)
+> - [Релизы](https://github.com/N3M1X10/warframe-batch-tools/releases)
