@@ -1,7 +1,7 @@
 @echo off
 chcp 65001>nul
 title Warframe : Set CPU Priority
-setlocal
+setlocal EnableDelayedExpansion
 
 ::# OPTIONS
 
@@ -12,61 +12,22 @@ set priority=normal
 
 ::END OF OPTIONS
 
-:: Restart with Admin Rights and hide the window
+:: Restart with Admin Rights and minimize the window
 set "arg=%1"
 if "%arg%" == "admin" (
     echo ! Restarted with admin rights and hidden
 ) else (
-    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Hidden"
+    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Minimized"
     exit
 )
 
 :: checking cycles
 
-:: cycle limitation
-set cycle_amount=120
-:: Executable name we looking for
-set process=Warframe.x64.exe
-:: Variable that makes this cycle doesn't endless, for performance reason
-set cycle_count=1
-
-:cycle
-cls
-echo ! Waiting for the "%process%" launch to change the priority of the process . . .
-echo Cycle Limitation. After %cycle_amount% attempts batch will stopped. Viewing Attempts: %cycle_count%
-
-if %cycle_count% geq %cycle_amount% (exit)
-set /a cycle_count=%cycle_count%+1
-
-:: My new, more thoughtful way to avoid failures is to divide the cycle into several stages of checks
-:: It's still bad. But it's definitely more reliable than the previous version
-:check-step1
-echo Step 1
->nul timeout /t 4 /nobreak
-tasklist |>nul findstr /b /l /i /c:%process% && goto check-step2
-goto cycle
-:check-step2
-echo Step 2
->nul timeout /t 4 /nobreak
-tasklist |>nul findstr /b /l /i /c:%process% && goto check-step3
-goto cycle
-:check-step3
-echo Step 3
->nul timeout /t 5 /nobreak
-tasklist |>nul findstr /b /l /i /c:%process% && goto check-step4
-goto cycle
-:check-step4
-echo Step 4
->nul timeout /t 6 /nobreak
-tasklist |>nul findstr /b /l /i /c:%process% && goto set-priority
-goto cycle
-
-:: Powershell command that sets priority for warframe
 :set-priority
-powershell (Get-Process -name "Warframe.x64").PriorityClass = [System.Diagnostics.ProcessPriorityClass]::%priority%
+powershell -Command "do {Start-Sleep -Seconds 2; $proc = Get-Process -Name "Warframe.x64" -ErrorAction SilentlyContinue; $hasWindow = $false; if ($proc -and $proc.MainWindowHandle -ne 0) { $hasWindow = $true; Write-Host "Process has been found"; $proc.PriorityClass = [System.Diagnostics.ProcessPriorityClass]::!priority!; Write-Host "Priority for Warframe.x64.exe has been changed"} else{cls; Write-Host "Process Warframe.x64.exe has no window"; Write-Host "Im trying to find him again . . ."}} while (-not $hasWindow)"
 echo ! Changing priority complete
->nul timeout /t 1 /nobreak
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools
 endlocal
+pause
 exit
