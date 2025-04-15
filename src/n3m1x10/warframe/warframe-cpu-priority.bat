@@ -8,7 +8,7 @@ setlocal EnableDelayedExpansion
 :: ## Change CPU Priority on Launch
 :: - Possible values: "idle", "low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"
 :: - Default: normal
-set priority=high
+set priority=normal
 
 ::END OF OPTIONS
 
