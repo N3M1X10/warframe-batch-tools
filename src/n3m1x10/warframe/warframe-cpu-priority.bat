@@ -29,5 +29,4 @@ echo ! Changing priority complete
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools
 endlocal
-pause
 exit
