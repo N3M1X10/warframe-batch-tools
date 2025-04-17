@@ -17,7 +17,7 @@ set "arg=%1"
 if "%arg%" == "admin" (
     echo ! Restarted with admin rights and hidden
 ) else (
-    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Hidden"
+    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Minimized"
     exit
 )
 
