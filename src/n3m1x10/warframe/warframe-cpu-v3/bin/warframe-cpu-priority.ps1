@@ -39,8 +39,7 @@ function PriorityApplication{
     )
     #priority table :)
     $priorityMapping = @{
-        'idle' = [System.Diagnostics.ProcessPriorityClass]::Idle
-        'low' = [System.Diagnostics.ProcessPriorityClass]::Low
+        'low' = [System.Diagnostics.ProcessPriorityClass]::Idle
         'BelowNormal' = [System.Diagnostics.ProcessPriorityClass]::BelowNormal
         'normal' = [System.Diagnostics.ProcessPriorityClass]::Normal
         'AboveNormal' = [System.Diagnostics.ProcessPriorityClass]::AboveNormal
@@ -115,5 +114,3 @@ if ($BreakFlag){
 else{
     Write-Host "Script completed successfully"
 }
-
-Read-Host 
