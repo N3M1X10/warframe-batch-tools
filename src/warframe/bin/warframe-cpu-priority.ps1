@@ -3,7 +3,7 @@
 # Change CPU Priority on Launch
 # - Possible values: "low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"
 # - Default: normal
-$Priority = "high"
+$Priority = "normal"
 
 # End of Parameters
 

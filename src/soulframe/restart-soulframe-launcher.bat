@@ -41,7 +41,7 @@ pause>nul&exit
 start "Tools\" "Tools\Launcher.exe"
 
 if %change_priority%==1 (
-cd /d "%~dp0" & start "" "soulframe-cpu-priority.bat"
+cd /d "%~dp0" & powershell -ExecutionPolicy Bypass -File "%~dp0bin\soulframe-cpu-priority.ps1"
 )
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools

@@ -3,12 +3,12 @@
 # Change CPU Priority on Launch
 # - Possible values: "low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"
 # - Default: normal
-$Priority = "high"
+$Priority = "normal"
 
 # End of Parameters
 
-$GameProcName = "Warframe.x64"
-$ClientProcName = "Warframe Launcher"
+$GameProcName = "Soulframe.x64"
+$ClientProcName = "Soulframe Launcher"
 
 function FindLauncher{
     param(
@@ -63,8 +63,8 @@ function PriorityApplication{
         #If launcher found, but not game process
         if ($HasLauncher -and -not $GameProc){
             cls
-            Write-Host "Process Warframe.x64.exe not found"
-            Write-Host "Please, launch Warframe"
+            Write-Host "Process Soulframe.x64.exe not found"
+            Write-Host "Please, launch Soulframe"
         }
 
         #If process window and game process was found, but not launcher
@@ -80,7 +80,7 @@ function PriorityApplication{
         #If launcher and game process was found, but process hasn't window
         elseif ($HasLauncher -and $GameProc -and -not ($GameProc.MainWindowHandle -ne 0)){
             cls
-            Write-Host "Process Warframe.x64.exe has no window"
+            Write-Host "Process Soulframe.x64.exe has no window"
             Write-Host "Im trying to find him again . . ."
         }
 
