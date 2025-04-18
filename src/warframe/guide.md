@@ -11,7 +11,7 @@
 # 🔁Быстрый перезапуск Warframe
 
 >[!tip]
-> - Скачать репозиторий целиком: [Download ZIP](https://github.com/N3M1X10/warframe-batch-tools/archive/refs/heads/master.zip)
+> - Скачать репозиторий целиком: [**`Download ZIP`**](https://github.com/N3M1X10/warframe-batch-tools/archive/refs/heads/master.zip)
 > - Чтобы скачать отдельные файлы: [Ищем такую кнопку](https://github.com/user-attachments/assets/c0169211-4266-4d54-b594-22e762d0938b). А за подробностями [Сюда](https://docs.github.com/ru/get-started/start-your-journey/downloading-files-from-github) или [Сюда](https://blog.skillfactory.ru/kak-skachivat-s-github/)
 > - Для редактирования скачанного на вашем ПК bat-файла: **`ПКМ` -> `Изменить`**
 
@@ -34,10 +34,10 @@
 ## 📁Файлы
 
 ### **Батники для Steam**
-- [**`restart-warframe-steam.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/restart-warframe-steam.bat) - Перезапустить Warframe
+- **`restart-warframe-steam.bat`** - Перезапустить Warframe
 
 ### **Батники для отдельного лаунчера**
-- [**`restart-warframe-launcher.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/restart-warframe-launcher.bat) - Перезапустить Warframe
+- **`restart-warframe-launcher.bat`** - Перезапустить Warframe
 
 ### 🔵AlecaFrame
 > [!warning]
@@ -46,15 +46,15 @@
 > ```bat
 > set overwolf=C:\Program Files\overwolf
 > ```
-> - [**`start-Aleca-Frame.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/bin/other/aleca-frame/start-Aleca-Frame.bat) - Запустить AlecaFrame
-- [**`kill-overwolf.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/bin/other/aleca-frame/kill-overwolf.bat) - Закрыть Overwolf
+> - **`start-Aleca-Frame.bat`** - Запустить AlecaFrame
+- **`kill-overwolf.bat`** - Закрыть Overwolf
 
 ### ❌Shutdown
-- [**`kill-warframe-and-overwolf.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/bin/other/kill/kill-warframe-and-overwolf.bat) - Закрыть Warframe и Overwolf
-- [**`kill-warframe.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/bin/other/kill/kill-warframe.bat) - Завершить процесс `Warframe.x64.exe`
+- **`kill-warframe-and-overwolf.bat`** - Закрыть Warframe и Overwolf
+- **`kill-warframe.bat`** - Завершить процесс `Warframe.x64.exe`
 
 ### ⚠️Экспериментальные опции
-- [**`warframe-cpu-priority.ps1`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/bin/warframe-cpu-priority.ps1) - этот пакет отвечает за изменение приоритета процесса Warframe. Если данного пакета не будет в директории - функция не сработает
+- **`warframe-cpu-priority.ps1`** - этот пакет отвечает за изменение приоритета процесса Warframe. Если данного пакета не будет в директории - функция не сработает
 
 ## ⚙️Change CPU Priority on Launch
 Установить для процесса Warframe приоритет CPU, при каждом запуске игры через пакеты перезапуска этого репозитория
