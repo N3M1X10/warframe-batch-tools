@@ -1,6 +1,6 @@
 # warframe-batch-tools
 
-`.bat`-ништяки для warframe
+Сборник batch файлов для различных целей
 
 ## Быстрый перезапуск Warframe и прочие функции
 > [!tip]
