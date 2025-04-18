@@ -1,2 +1,3 @@
+*.ps1 eol=crlf
 *.cmd eol=crlf
 *.bat eol=crlf

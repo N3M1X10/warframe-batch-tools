@@ -5,8 +5,8 @@ setlocal
 
 ::# OPTIONS
 :: If you don't know what they mean - read:
-:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/warframe/guide.md
-:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/soulframe/guide.md
+:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/warframe/guide.md
+:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/soulframe/guide.md
 
 :: Change CPU Priority on Launch [1 / 0] (read guide.md)
 :: WARNING! UNSTABLE!
@@ -25,6 +25,16 @@ if "%arg%" == "admin" (
 )
 
 ::kill
+:: launcher
+for /f "tokens=1,2,3 delims= " %%i in ('powershell -Command "Get-Process -Name 'Launcher' | Select-Object Description, Id | Format-Table -HideTableHeaders | Out-String"') do (
+    if "%%i %%j"=="Soulframe Launcher" (
+        echo Description: %%i %%j
+        echo PID: %%k
+        taskkill /f /pid %%k
+        echo Процесс с PID %%k был завершен.
+    ) else (cls&echo Лаунчер не найден)
+)
+:: game
 >nul taskkill /f /im "Soulframe.x64.exe" /t
 >nul timeout /t 1 /nobreak
 
@@ -41,7 +51,7 @@ pause>nul&exit
 start "Tools\" "Tools\Launcher.exe"
 
 if %change_priority%==1 (
-cd /d "%~dp0" & start "" "soulframe-cpu-priority.bat"
+cd /d "%~dp0" & powershell -ExecutionPolicy Bypass -File "%~dp0bin\soulframe-cpu-priority.ps1"
 )
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools

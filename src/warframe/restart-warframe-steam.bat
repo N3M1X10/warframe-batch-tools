@@ -3,10 +3,11 @@ chcp 65001>nul
 title Warframe (Steam) : Restart
 setlocal
 
-::# OPTIONS
+:: # OPTIONS
+
 :: If you don't know what they mean - read:
-:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/warframe/guide.md
-:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/n3m1x10/soulframe/guide.md
+:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/warframe/guide.md
+:: - https://github.com/N3M1X10/warframe-batch-tools/blob/main/src/soulframe/guide.md
 
 :: Set the Warframe directory path !!! (read guide.md)
 set warframe=
@@ -21,7 +22,7 @@ set without_steam=1
 :: default=0
 set change_priority=0
 
-:: END OF OPTIONS
+:: # END OF OPTIONS
 
 :: Restart with Admin Rights and minimize the window
 set "arg=%1"
@@ -59,7 +60,8 @@ explorer "steam://rungameid/230410"
 
 :: Call CPU Priority batch if you choose "set change_priority=1"
 if %change_priority%==1 (
-cd /d "%~dp0" & start "" "warframe-cpu-priority.bat"
+rem cd /d "%~dp0" & start "" "warframe-cpu-priority.bat"
+cd /d "%~dp0" & powershell -ExecutionPolicy Bypass -File "%~dp0bin\warframe-cpu-priority.ps1"
 )
 
 :: Source: https://github.com/N3M1X10/warframe-batch-tools
