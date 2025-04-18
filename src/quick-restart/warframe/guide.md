@@ -1,9 +1,9 @@
 ### 📕guide.md
 <p align="left">
-   <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/guide.md">
+   <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/warframe/guide.md">
       <img width="96" alt="warframe guide" src="https://github.com/N3M1X10/warframe-batch-tools/blob/master/assets/warframe-badge-hl.png">
    </a>
-  <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/soulframe/guide.md">
+  <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/soulframe/guide.md">
       <img width="96" alt="soulframe guide" src="https://github.com/N3M1X10/warframe-batch-tools/blob/master/assets/soulframe-badge.png">
    </a>
 </p>

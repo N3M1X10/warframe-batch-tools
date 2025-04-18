@@ -9,5 +9,5 @@
 
 > [!important]
 > 2. Читаем инструкции:
-> - **Для Warframe: [`src/warframe/guide.md`](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/guide.md)**
-> - **Для Soulframe: [`src/soulframe/guide.md`](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/soulframe/guide.md)**
+> - **Для Warframe: [`src/warframe/guide.md`](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/warframe/guide.md)**
+> - **Для Soulframe: [`src/soulframe/guide.md`](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/soulframe/guide.md)**
