@@ -1,8 +1,14 @@
+# Parameters
 
-# Params 
+# Change CPU Priority on Launch
+# - Possible values: "low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"
+# - Default: normal
+$Priority = "high"
+
+# End of Parameters
+
 $GameProcName = "Warframe.x64"
 $ClientProcName = "Warframe Launcher"
-$Priority = "high"
 
 function FindLauncher{
     param(
