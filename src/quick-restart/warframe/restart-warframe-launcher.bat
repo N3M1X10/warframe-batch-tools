@@ -26,15 +26,14 @@ if "%arg%" == "admin" (
 )
 
 :: warframe kill
-
 :: launcher
 for /f "tokens=1,2,3 delims= " %%i in ('powershell -Command "Get-Process -Name 'Launcher' | Select-Object Description, Id | Format-Table -HideTableHeaders | Out-String"') do (
     if "%%i %%j"=="Warframe Launcher" (
         echo Description: %%i %%j
         echo PID: %%k
         taskkill /f /pid %%k
-        echo Процесс с PID %%k был завершен.
-    ) else (cls&echo Лаунчер не найден)
+        echo Process with PID %%k has terminated
+    ) else (cls&echo Launcher not found)
 )
 :: game
 >nul taskkill /f /im "Warframe.x64.exe" /t
