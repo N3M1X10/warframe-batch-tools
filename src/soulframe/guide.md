@@ -1,3 +1,13 @@
+### 📕guide.md
+<p align="left">
+   <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/warframe/guide.md">
+      <img width="96" alt="warframe guide" src="https://github.com/N3M1X10/warframe-batch-tools/blob/master/assets/warframe-badge.png">
+   </a>
+  <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/soulframe/guide.md">
+      <img width="96" alt="soulframe guide" src="https://github.com/N3M1X10/warframe-batch-tools/blob/master/assets/soulframe-badge-hl.png">
+   </a>
+</p>
+
 # Soulframe batch files
 - [**`restart-soulframe-launcher.bat`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/soulframe/restart-soulframe-launcher.bat) - Быстрый перезапуск для Soulframe
 
