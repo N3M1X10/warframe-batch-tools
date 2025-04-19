@@ -98,9 +98,12 @@ function PriorityApplication{
 
 
 # launcher launch check (Don't touch what works) xD
+## if launcher not found but the game is here - the cycle terminates himself
 do{
     Start-Sleep -Seconds 1
     $HasLauncher = FindLauncher -LauncherDescName $ClientProcName
+    $GameProc = Get-Process -Name $GameProcName -ErrorAction SilentlyContinue
+
     if ($HasLauncher){
         cls
         Write-Host "Client $ClientProcName was found"
@@ -108,7 +111,7 @@ do{
     else {
         Write-Host "Please launch $ClientProcName"
     }
-} while (-not $HasLauncher)
+} while (-not $HasLauncher -and -not $GameProc -and -not ($GameProc.MainWindowHandle -ne 0))
 
 $BreakFlag = PriorityApplication -GameProcName $GameProcName -ClientProcName $ClientProcName -Priority $Priority
 
