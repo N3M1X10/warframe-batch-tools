@@ -1,4 +1,4 @@
-# warframe-batch-tools
+# WFBT
 > Сборник **batch** и **powershell** cкриптов для различных целей, относительно таких игр как: **Warframe** и **Soulframe**
 
 > [!tip]
