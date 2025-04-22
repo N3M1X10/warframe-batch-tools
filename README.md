@@ -1,5 +1,5 @@
-# warframe-batch-tools
-Сборник batch файлов для различных целей
+# WFBT
+> Сборник **batch** и **powershell** cкриптов для различных целей, относительно таких игр как: **Warframe** и **Soulframe**
 
 > [!tip]
 > Скачивание:
