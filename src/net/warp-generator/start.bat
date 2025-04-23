@@ -1,4 +1,5 @@
-@echo off&chcp 65001>nul
+@echo off
+rem chcp 65001>nul
 setlocal
 set "arg=%1"
 if "%arg%" == "admin" (

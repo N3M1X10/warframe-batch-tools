@@ -24,7 +24,13 @@ $hasAmnesia = Get-Command awg -ErrorAction SilentlyContinue
 if (-not $hasAmnesia) {
     downloadAmnezia
 }
+else {
+    $programName = "amneziawg.exe"
+    if (Get-Command $programName -ErrorAction SilentlyContinue) {
+        Start-Process $programName
+    }
 
+}
 
 function getWarframePort{
     $connections = Get-NetTCPConnection | Where-Object { $_.RemotePort -ge 6695 -and $_.RemotePort -le 6705 }
