@@ -1,3 +1,5 @@
+#path args
+
 $scriptPath = $PSScriptRoot
 $parentPath = Split-Path $scriptPath -Parent
 $binPath = Join-Path $parentPath "bin"
@@ -5,32 +7,37 @@ $binPath = Join-Path $parentPath "bin"
 if (-not (Test-Path $binPath)) {
     New-Item -Path $binPath -ItemType Directory
 }
+
 function downloadAmnezia{
     $arch = $env:PROCESSOR_ARCHITECTURE.ToLower()
     $downloadUrl = "https://github.com/amnezia-vpn/amneziawg-windows-client/releases/download/1.0.0/amneziawg-$arch-1.0.0.msi"
     $outputPath = "$binPath\amneziawg-$arch-1.0.0.msi"
 
-    curl -v -o $outputPath $downloadUrl
-    cd $binPath
-    Start-Process msiexec.exe -ArgumentList "/i", "amneziawg-$arch-1.0.0.msi", "/quiet", "/norestart" -NoNewWindow -Wait
-    Write-Host "AmneziaWG successfully installed."
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
+    # cd $binPath
+    # Start-Process msiexec.exe -ArgumentList "/i", "amneziawg-$arch-1.0.0.msi", "/quiet", "/norestart" -NoNewWindow -Wait
 
-    [System.Reflection.Assembly]::LoadWithPartialName("System.Management.Automation") | Out-Null
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
-    Write-Host "Powershell session updated"
-}
 
-$hasAmnesia = Get-Command awg -ErrorAction SilentlyContinue
-if (-not $hasAmnesia) {
-    downloadAmnezia
-}
-else {
-    $programName = "amneziawg.exe"
-    if (Get-Command $programName -ErrorAction SilentlyContinue) {
-        Start-Process $programName
+    $msiPath = Join-Path $binPath "amneziawg-$arch-1.0.0.msi"
+    if (Get-Command msiexec.exe -ErrorAction SilentlyContinue){
+        Write-Host "msiexec.exe found"
+        Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -NoNewWindow -Wait
+        Write-Host "AmneziaWG successfully installed."
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+        Write-Host "Powershell session updated"
+    }   
+    else{
+        Write-Host "msiexec.exe not found"
+        Write-Host "Please install awg manually"
+        Read-Host "Press ENTER to close the window"
+        exit 0
     }
+    
+
+    # [System.Reflection.Assembly]::LoadWithPartialName("System.Management.Automation") | Out-Null
 
 }
+
 
 function getWarframePort{
     $connections = Get-NetTCPConnection | Where-Object { $_.RemotePort -ge 6695 -and $_.RemotePort -le 6705 }
@@ -49,6 +56,20 @@ function getWarframePort{
         }
         return "0.0.0.0/0, ::/0"
     }
+}
+
+
+
+$hasAmnesia = Get-Command awg -ErrorAction SilentlyContinue
+if (-not $hasAmnesia) {
+    downloadAmnezia
+}
+else {
+    $programName = "amneziawg.exe"
+    if (Get-Command $programName -ErrorAction SilentlyContinue) {
+        Start-Process $programName
+    }
+
 }
 
 #ARGS
