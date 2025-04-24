@@ -85,3 +85,7 @@ set change_priority=1
 ```ps1
 $Priority = "high"
 ```
+
+## 💻User Account Control
+Для отключения уведомлений системы защиты при запуске файлов репозитория можно обратиться сюда:
+- [**`src/uac/readme.md`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/uac/readme.md)
