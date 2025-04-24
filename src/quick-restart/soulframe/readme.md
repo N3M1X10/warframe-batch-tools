@@ -1,4 +1,4 @@
-### 📕guide.md
+### 📕readme.md
 <p align="left">
    <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/warframe/readme.md">
       <img width="96" alt="warframe guide" src="https://github.com/N3M1X10/warframe-batch-tools/blob/master/assets/warframe-badge.png">
