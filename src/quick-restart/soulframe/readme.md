@@ -18,8 +18,8 @@
 - **`restart-soulframe-launcher.bat`** - Быстрый перезапуск для Soulframe
 
 ### ⚠️Экспериментальные опции
-- **`soulframe-cpu-priority.ps1`** - это powershell скрипт, который отвечает за изменение приоритета процесса Soulframe. Если данного файла не будет в директории - функция не сработает
-- **`apply-soulframe-cpu-priority.bat`** - пакет для ручного запуска powershell скрипта
+- **`bin\soulframe-cpu-priority.ps1`** - это powershell скрипт, который отвечает за изменение приоритета процесса Soulframe. Если данного файла не будет в директории - функция не сработает
+- **`bin\apply-soulframe-cpu-priority.bat`** - пакет для ручного запуска powershell скрипта
 
 ## ⚙️Change CPU Priority on Launch
 Установить для процесса Soulframe приоритет CPU, при каждом запуске игры через пакеты перезапуска этого репозитория
@@ -27,12 +27,13 @@
 > [!caution]
 > **Внимание! Опция для опытных пользователей! Данный метод может повлиять на стабильность системы!**
 
-1. Для включения опции, в пакете перезапуска (`restart-soulframe-launcher.bat`) - найдите переменную `change_priority` и установите `1`
+1. Для включения опции, в пакете перезапуска (`restart-soulframe-launcher.bat`) -> пкм -> изменить -> найдите переменную `change_priority` и установите `1`
+
 ```bat
 set change_priority=1
 ```
 
-2. Затем в `soulframe-cpu-priority.ps1` измените переменную `$Priority` на нужное вам значение
+2. Затем в `bin\soulframe-cpu-priority.ps1` -> пкм - изменить -> поменяйте значение переменной `$Priority` на нужное вам
 
 Разрешённые значения:
 
