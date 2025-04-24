@@ -17,7 +17,8 @@
 7. Нажимаем "Подключить" в правой части окна AmnesiaWG
 8. Перезапускаем игру и проверяем чат
 
-### Альтернативный вариант, если не помогает
+### Альтернативный вариант, если не срабатывает `start.bat`
+В случае если `start.bat` не генерирует конфиг, вам может помочь следующее:
 1. Открываем и читаем [гайд по AmneziaWG](https://docs.google.com/document/d/1DX4X7t7V4QasQJYbps5D1yNtsK7tqsouSMJH2w4AMOY)
 2. Устанавливаем awg как написано в гайде и добавляем в него конфиг, сгенерированный на [**этом сайте**](https://generator-warp.vercel.app/)
 3. Заходим в директорию: `src/net/warp-generator/portcheck` и запускаем там **`portcheck-warframe.bat`**
@@ -30,4 +31,4 @@ PublicKey = abracadabra
 AllowedIPs = 172.232.25.131
 Endpoint = engage.cloudflareclient.com:500
 ```
-- Редактировать остальные значение не нужно!
+- Редактировать остальные значения не нужно!
