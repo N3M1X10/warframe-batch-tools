@@ -13,7 +13,9 @@ if "%arg%" == "admin" (
 echo.
 
 :: base reset
-echo NETSH RESET
+echo NETSH WINSOCK RESET
+netsh winsock reset
+echo NETSH INT IP RESET
 netsh int ip reset
 timeout /t 1 /nobreak
 echo RELEASE
