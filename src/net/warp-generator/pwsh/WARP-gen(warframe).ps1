@@ -8,15 +8,88 @@ if (-not (Test-Path $binPath)) {
     New-Item -Path $binPath -ItemType Directory
 }
 
+
+
+class ApiRequestClient{
+    [string]$ApiUrl
+    [string]$Method
+    [string]$Endpoint
+    [string]$Token
+    [hashtable]$Headers
+    [string]$Body
+
+    ApiRequestClient([string]$apiUrl) {
+        $this.ApiUrl = $apiUrl
+        $this.Headers = @{}
+        $this.Body = ""
+    }
+
+
+    [void] setRequestParameters([string]$method, [string]$endpoint, [string]$token = "", [hashtable]$headers = @{}, [string]$body = "") {
+        $this.Method = $method
+        $this.Endpoint = $endpoint
+        $this.Token = $token
+        $this.Headers = $headers
+        $this.Body = $body
+    }
+
+
+
+    [Object] invokeApi() {
+        $url = "$($this.ApiUrl)/$($this.Endpoint)"
+        if ($this.Token) {
+            $this.Headers["Authorization"] = "Bearer $($this.Token)"
+        }
+        try {
+            $response = Invoke-RestMethod -Uri $url -Method $this.Method -Headers $this.Headers -Body $this.Body -ContentType "application/json" -Verbose
+            return $response
+        }
+        catch {
+            Write-Host "Request error: $_"
+            return $null 
+        }
+    }
+
+    # POST
+    [Object] ins([string]$method, [string]$endpoint, [string]$token = "", [hashtable]$headers = @{}, [string]$body = "") {
+        $this.setRequestParameters($method, $endpoint, $token, $headers, $body)
+        return $this.InvokeApi()
+    }
+
+    # PATCH
+    [Object] sec([string]$method, [string]$endpoint, [string]$token, [hashtable]$headers = @{}, [string]$body = "") {
+        $this.setRequestParameters($method, $endpoint, $token, $headers, $body)
+        return $this.InvokeApi()
+    }
+
+    [bool] checkConnection() {
+        try {
+            $this.SetRequestParameters("POST", "reg", "", @{}, "")
+            $url = "$($this.ApiUrl)/$($this.Endpoint)"
+            $response = Invoke-RestMethod -Uri $url -Method $this.Method -Headers $this.Headers -Body $this.Body -ContentType "application/json" -Verbose -TimeoutSec 10
+            if ($response -ne $null) {
+                return $true
+            }
+            else {
+                return $false
+            }
+        }
+        catch {
+            Write-Host "Connection error: $_"
+            return $false
+        }
+    }
+}
+
 function downloadAmnezia{
     $arch = $env:PROCESSOR_ARCHITECTURE.ToLower()
     $downloadUrl = "https://github.com/amnezia-vpn/amneziawg-windows-client/releases/download/1.0.0/amneziawg-$arch-1.0.0.msi"
     $outputPath = "$binPath\amneziawg-$arch-1.0.0.msi"
 
     Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
+    #FUCK THIS SHIT
     # cd $binPath
     # Start-Process msiexec.exe -ArgumentList "/i", "amneziawg-$arch-1.0.0.msi", "/quiet", "/norestart" -NoNewWindow -Wait
-
 
     $msiPath = Join-Path $binPath "amneziawg-$arch-1.0.0.msi"
     if (Get-Command msiexec.exe -ErrorAction SilentlyContinue){
@@ -32,12 +105,8 @@ function downloadAmnezia{
         Read-Host "Press ENTER to close the window"
         exit 0
     }
-    
-
-    # [System.Reflection.Assembly]::LoadWithPartialName("System.Management.Automation") | Out-Null
 
 }
-
 
 function getWarframePort{
     $connections = Get-NetTCPConnection | Where-Object { $_.RemotePort -ge 6695 -and $_.RemotePort -le 6705 }
@@ -58,7 +127,27 @@ function getWarframePort{
     }
 }
 
+function installService {
+    $process = Start-Process "amneziawg" -ArgumentList "/installtunnelservice", "$binPath\awg0.conf" -PassThru -Verb RunAs
+    $process.WaitForExit()
+    if ($process.ExitCode -eq 0) {
+        Write-Host "Service was installed successfully."
+        return $true
+    } else {
+        Write-Host "Service installation failed."
+        return $false
+    }
+}
 
+function uninstallService {
+    $process = Start-Process "amneziawg" -ArgumentList "/uninstalltunnelservice", "awg0" -PassThru -Verb RunAs
+    $process.WaitForExit()
+    if ($process.ExitCode -eq 0) {
+        Write-Host "Service was removed successfully."
+    } else {
+        Write-Host "Service uninstallation failed."
+    }
+}
 
 $hasAmnesia = Get-Command awg -ErrorAction SilentlyContinue
 if (-not $hasAmnesia) {
@@ -72,66 +161,65 @@ else {
 
 }
 
-#ARGS
+#CLIENT ARGS
 $api = "https://api.cloudflareclient.com/v0i1909051800"
+$client = [ApiRequestClient]::new($api)
+
+#KEYS
 $priv = if ($args[0]) { $args[0] } else { (awg genkey) }
 $pub = if ($args[1]) { $args[1] } else { $priv | awg pubkey }
+
+#SYS INFO
 $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
 $osType = if ($osInfo.Caption -like "*Windows*") { "windows" } else { "Unknown" }
+$syslocale = Get-Culture
 
-function ins {
-    param (
-        [string]$method,
-        [string]$endpoint,
-        [string]$token = "",
-        [hashtable]$headers = @{},
-        [string]$body = ""
-    )
-
-    $url = "${api}/$endpoint"
-
-    if ($token) {
-        $headers["Authorization"] = "Bearer $token"
-    }
-
-    $response = Invoke-RestMethod -Uri $url -Method $method -Headers $headers -Body $body -ContentType "application/json"
-    return $response
-}
-
-
-function sec {
-    param (
-        [string]$method,
-        [string]$endpoint,
-        [string]$token,
-        [hashtable]$headers = @{},
-        [string]$body = ""
-    )
-
-    return ins -method $method -endpoint $endpoint -token $token -headers $headers -body $body
-}
-
-
+#REQUEST BODY
 $body = @{
     install_id = ""
-    tos = (Get-Date -Format "yyyy-MM-ddTHH:mm:ss.fffZ")
+    tos = (Get-Date -UFormat "%Y-%m-%dT%H:%M:%S.000Z")
     key = $pub
     fcm_token = ""
     type = $osType
-    locale = "en_US"
+    locale = $syslocale
 } | ConvertTo-Json
 
 
-$response = ins -method "POST" -endpoint "reg" -body $body
+$test = $client.checkConnection()
+$hasServiceInstalled = $false
+
+do{
+    if($test -eq $true){
+        Write-Host "Connection established"
+        break
+    }
+    else{
+        Write-Host "Connection failed"
+        if($hasServiceInstalled -eq $false){
+            $hasServiceInstalled = installService
+        }
+        $test = $client.checkConnection()
+        Start-Sleep -Seconds 2
+    }
+}
+while(-not $test)
+#REQUEST
+#$response = ins -method "POST" -endpoint "reg" -body $body
+$response = $client.ins("POST", "reg", "", @{}, $body)
 
 $id = $response.result.id
 $token = $response.result.token
-$response = sec -method "PATCH" -endpoint "reg/$id" -token $token -body '{"warp_enabled":true}'
 
-$peer_pub = $response.result.config.peers[0].public_key
-$client_ipv4 = $response.result.config.interface.addresses.v4
-$client_ipv6 = $response.result.config.interface.addresses.v6
+
+#$response = sec -method "PATCH" -endpoint "reg/$id" -token $token -body '{"warp_enabled":true}'
+$patchResponse = $client.sec("PATCH", "reg/$id", $token, @{}, '{"warp_enabled":true}')
+
+$peer_pub = $patchResponse.result.config.peers[0].public_key
+$client_ipv4 = $patchResponse.result.config.interface.addresses.v4
+$client_ipv6 = $patchResponse.result.config.interface.addresses.v6
 $allowips = getWarframePort
+
+
 $conf = @"
 [Interface]
 PrivateKey = ${priv}
@@ -154,8 +242,9 @@ AllowedIPs = ${allowips}
 Endpoint = engage.cloudflareclient.com:500
 "@
 
-
 $warpConfigPath = Join-Path $parentPath "bin\WARP_warframe_chat.conf"
 $conf | Out-File -FilePath $warpConfigPath
-
+if($hasServiceInstalled -eq $true){
+    uninstallService
+}
 Read-Host "Press ENTER to close the window"
