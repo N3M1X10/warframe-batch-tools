@@ -34,4 +34,23 @@ Endpoint = engage.cloudflareclient.com:500
 - Редактировать остальные значения не нужно!
 
 ## Примечания
-- Этот конфиг будет действовать преимущественно на ip чата. Что означает стабильную работу остальной игры
+- Этот конфиг будет действовать преимущественно на ip чата и сайтов warframe. Что означает стабильную работу остальной игры
+
+>[!caution]
+> - Пользовательское соглашение (End User License Agreement) не одобряет подобного рода обходов. Это крайняя мера
+>   - Ответ команды поддержки Warframe:
+>```txt
+>Thank you for contacting us.
+> 
+>We appreciate you reaching out to clarify this.
+>Please note that while using general VPN services to improve connection stability is allowed, modifying or redirecting Warframe’s network traffic — including through third-party tools >like AmneziaWG or similar methods — is not permitted under our Terms of Use and End User License Agreement (EULA).
+> 
+>Using such tools, even if intended only for specific services like in-game chat, is considered tampering with Warframe's services and can lead to account penalties, including >suspension or banning.
+> 
+>We strongly recommend avoiding the use of any third-party applications that alter or redirect Warframe’s network traffic to ensure the security of your account.
+> 
+>Thank you for your understanding, and let us know if you have any other questions!
+> 
+>Kind regards,
+>Warframe Support Team
+>```
