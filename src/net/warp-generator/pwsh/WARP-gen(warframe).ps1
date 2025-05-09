@@ -3,12 +3,15 @@
 $scriptPath = $PSScriptRoot
 $parentPath = Split-Path $scriptPath -Parent
 $binPath = Join-Path $parentPath "bin"
+$configPath = Join-Path $parentPath "config"
 
 if (-not (Test-Path $binPath)) {
     New-Item -Path $binPath -ItemType Directory
 }
 
-
+if (-not (Test-Path $configPath)) {
+    New-Item -Path $configPath -ItemType Directory
+}
 
 class ApiRequestClient{
     [string]$ApiUrl
@@ -24,7 +27,6 @@ class ApiRequestClient{
         $this.Body = ""
     }
 
-
     [void] setRequestParameters([string]$method, [string]$endpoint, [string]$token = "", [hashtable]$headers = @{}, [string]$body = "") {
         $this.Method = $method
         $this.Endpoint = $endpoint
@@ -32,8 +34,6 @@ class ApiRequestClient{
         $this.Headers = $headers
         $this.Body = $body
     }
-
-
 
     [Object] invokeApi() {
         $url = "$($this.ApiUrl)/$($this.Endpoint)"
@@ -62,6 +62,7 @@ class ApiRequestClient{
         return $this.InvokeApi()
     }
 
+    # CONNECTION CHECKER
     [bool] checkConnection() {
         try {
             $this.SetRequestParameters("POST", "reg", "", @{}, "")
@@ -81,17 +82,9 @@ class ApiRequestClient{
     }
 }
 
-function downloadAmnezia{
-    $arch = $env:PROCESSOR_ARCHITECTURE.ToLower()
-    $downloadUrl = "https://github.com/amnezia-vpn/amneziawg-windows-client/releases/download/1.0.0/amneziawg-$arch-1.0.0.msi"
-    $outputPath = "$binPath\amneziawg-$arch-1.0.0.msi"
-
-    Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
-    #FUCK THIS SHIT
-    # cd $binPath
-    # Start-Process msiexec.exe -ArgumentList "/i", "amneziawg-$arch-1.0.0.msi", "/quiet", "/norestart" -NoNewWindow -Wait
-
-    $msiPath = Join-Path $binPath "amneziawg-$arch-1.0.0.msi"
+# I should refactor this xD
+function installAmnezia{
+    $msiPath = Join-Path $binPath "amneziawg-amd64-1.0.0.msi"
     if (Get-Command msiexec.exe -ErrorAction SilentlyContinue){
         Write-Host "msiexec.exe found"
         Start-Process msiexec.exe -ArgumentList "/i", "`"$msiPath`"", "/quiet", "/norestart" -NoNewWindow -Wait
@@ -128,7 +121,7 @@ function getWarframePort{
 }
 
 function installService {
-    $process = Start-Process "amneziawg" -ArgumentList "/installtunnelservice", "$binPath\awg0.conf" -PassThru -Verb RunAs
+    $process = Start-Process "amneziawg" -ArgumentList "/installtunnelservice", "$configPath\awg0.conf" -PassThru -Verb RunAs
     $process.WaitForExit()
     if ($process.ExitCode -eq 0) {
         Write-Host "Service was installed successfully."
@@ -149,9 +142,10 @@ function uninstallService {
     }
 }
 
+
 $hasAmnesia = Get-Command awg -ErrorAction SilentlyContinue
 if (-not $hasAmnesia) {
-    downloadAmnezia
+    installAmnezia
 }
 else {
     $programName = "amneziawg.exe"
@@ -185,66 +179,78 @@ $body = @{
 } | ConvertTo-Json
 
 
-$test = $client.checkConnection()
+$testcon = $client.checkConnection()
 $hasServiceInstalled = $false
+$repeats = 0
 
-do{
-    if($test -eq $true){
-        Write-Host "Connection established"
-        break
-    }
-    else{
-        Write-Host "Connection failed"
-        if($hasServiceInstalled -eq $false){
-            $hasServiceInstalled = installService
+if ($testcon -eq $false){
+    do{
+        if($testcon -eq $true){
+            Write-Host "Connection established"
+            break
         }
-        $test = $client.checkConnection()
-        Start-Sleep -Seconds 2
+        else{
+            Write-Host "Connection failed"
+            if($hasServiceInstalled -eq $false){
+                $hasServiceInstalled = installService
+            }
+            $testcon = $client.checkConnection()
+            $repeats += 1
+            Start-Sleep -Seconds 2
+        }
     }
+    while(-not $testcon -and $repeats -ne 10)
 }
-while(-not $test)
-#REQUEST
-#$response = ins -method "POST" -endpoint "reg" -body $body
-$response = $client.ins("POST", "reg", "", @{}, $body)
 
-$id = $response.result.id
-$token = $response.result.token
+if ($testcon -eq $true){
 
+    #REQUEST
+    #$response = ins -method "POST" -endpoint "reg" -body $body
+    $response = $client.ins("POST", "reg", "", @{}, $body)
 
-#$response = sec -method "PATCH" -endpoint "reg/$id" -token $token -body '{"warp_enabled":true}'
-$patchResponse = $client.sec("PATCH", "reg/$id", $token, @{}, '{"warp_enabled":true}')
+    $id = $response.result.id
+    $token = $response.result.token
 
-$peer_pub = $patchResponse.result.config.peers[0].public_key
-$client_ipv4 = $patchResponse.result.config.interface.addresses.v4
-$client_ipv6 = $patchResponse.result.config.interface.addresses.v6
-$allowips = getWarframePort
+    #$response = sec -method "PATCH" -endpoint "reg/$id" -token $token -body '{"warp_enabled":true}'
+    $patchResponse = $client.sec("PATCH", "reg/$id", $token, @{}, '{"warp_enabled":true}')
 
+    $peer_pub = $patchResponse.result.config.peers[0].public_key
+    $client_ipv4 = $patchResponse.result.config.interface.addresses.v4
+    $client_ipv6 = $patchResponse.result.config.interface.addresses.v6
+    $allowips = getWarframePort
 
-$conf = @"
-[Interface]
-PrivateKey = ${priv}
-S1 = 0
-S2 = 0
-Jc = 120
-Jmin = 23
-Jmax = 911
-H1 = 1
-H2 = 2
-H3 = 3
-H4 = 4
-MTU = 1280
-Address = ${client_ipv4}, ${client_ipv6}
-DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
+        $conf = @"
+    [Interface]
+    PrivateKey = ${priv}
+    S1 = 0
+    S2 = 0
+    Jc = 120
+    Jmin = 23
+    Jmax = 911
+    H1 = 1
+    H2 = 2
+    H3 = 3
+    H4 = 4
+    MTU = 1280
+    Address = ${client_ipv4}, ${client_ipv6}
+    DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
 
-[Peer]
-PublicKey = ${peer_pub}
-AllowedIPs = ${allowips}
-Endpoint = engage.cloudflareclient.com:500
-"@
+    [Peer]
+    PublicKey = ${peer_pub}
+    AllowedIPs = ${allowips}
+    Endpoint = engage.cloudflareclient.com:500
+    "@
+    $warpConfigPath = Join-Path $configPath "WARP_warframe_chat.conf"
+    $conf | Out-File -FilePath $warpConfigPath
 
-$warpConfigPath = Join-Path $parentPath "bin\WARP_warframe_chat.conf"
-$conf | Out-File -FilePath $warpConfigPath
+    Write-host "Generation sucessfull. Please check the config path."
+}
+else{
+    Write-Host "An error occurred while generating the config. Please do this manually."
+}
+
 if($hasServiceInstalled -eq $true){
     uninstallService
 }
+
 Read-Host "Press ENTER to close the window"
