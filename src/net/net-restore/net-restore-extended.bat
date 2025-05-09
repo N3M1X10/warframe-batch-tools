@@ -17,12 +17,10 @@ echo NETSH WINSOCK RESET
 netsh winsock reset
 echo NETSH INT IP RESET
 netsh int ip reset
-timeout /t 1 /nobreak
 echo RELEASE
 ipconfig /release
 echo RENEW
 ipconfig /renew
-timeout /t 1 /nobreak
 
 :: extended reset
 echo RENEW EL
@@ -30,7 +28,6 @@ ipconfig /renew EL
 echo IPV6
 ipconfig /release6
 ipconfig /renew6
-timeout /t 1 /nobreak
 
 :: dns reset
 echo FLUSHDNS
