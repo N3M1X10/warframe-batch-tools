@@ -29,23 +29,18 @@ set "arg=%1"
 if "%arg%" == "admin" (
     echo ! Restarted with admin rights and minimized
 ) else (
-    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Minimized"
+    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Hidden"
     exit /b
 )
 
-:: warframe kill
-:: launcher
-for /f "tokens=1,2,3 delims= " %%i in ('powershell -Command "Get-Process -Name 'Launcher' | Select-Object Description, Id | Format-Table -HideTableHeaders | Out-String"') do (
-    if "%%i %%j"=="Warframe Launcher" (
-        echo Description: %%i %%j
-        echo PID: %%k
-        taskkill /f /pid %%k
-        echo Process with PID %%k has terminated
-    ) else (cls&echo Launcher not found)
-)
-:: game
+:: kill
+:: Game
 >nul taskkill /f /im "Warframe.x64.exe" /t
 >nul timeout /t 1 /nobreak
+:: Launcher
+powershell -Command "Get-Process Launcher | Where-Object { $path = $_.Path; if ($path.Contains('Warframe')) { Write-Host 'Killing Process...'; Stop-Process -Id $_.Id; } }"
+:: RemoteCrashSender
+powershell -Command "Get-Process RemoteCrashSender | Where-Object { $path = $_.Path; if ($path.Contains('Warframe')) { Write-Host 'Killing Process...'; Stop-Process -Id $_.Id; } }"
 
 ::warframe start (starting without steam)
 cd /d "%warframe%"
