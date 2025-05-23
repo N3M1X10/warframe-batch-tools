@@ -58,4 +58,4 @@ $Priority = "high"
 
 ## 💻User Account Control
 Для отключения уведомлений системы защиты при запуске файлов репозитория можно обратиться сюда:
-- [**`windows-batch/src/net/uac`**](https://github.com/N3M1X10/windows-batch/tree/master/src/net/uac)
+- [**`windows-batch/src/net/uac`**](https://github.com/N3M1X10/windows-batch/tree/master/src/system-policies/uac)
