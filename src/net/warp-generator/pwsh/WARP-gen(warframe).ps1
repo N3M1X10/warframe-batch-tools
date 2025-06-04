@@ -219,29 +219,32 @@ if ($testcon -eq $true){
     $client_ipv6 = $patchResponse.result.config.interface.addresses.v6
     $allowips = getWarframePort
 
-        $conf = @"
-    [Interface]
-    PrivateKey = ${priv}
-    S1 = 0
-    S2 = 0
-    Jc = 120
-    Jmin = 23
-    Jmax = 911
-    H1 = 1
-    H2 = 2
-    H3 = 3
-    H4 = 4
-    MTU = 1280
-    Address = ${client_ipv4}, ${client_ipv6}
-    DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
+    $conf = @"
+[Interface]
+PrivateKey = ${priv}
+S1 = 0
+S2 = 0
+Jc = 120
+Jmin = 23
+Jmax = 911
+H1 = 1
+H2 = 2
+H3 = 3
+H4 = 4
+MTU = 1280
+Address = ${client_ipv4}, ${client_ipv6}
+DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
 
-    [Peer]
-    PublicKey = ${peer_pub}
-    AllowedIPs = ${allowips}
-    Endpoint = engage.cloudflareclient.com:500
-    "@
+[Peer]
+PublicKey = ${peer_pub}
+AllowedIPs = ${allowips}
+Endpoint = engage.cloudflareclient.com:500
+"@
+    $confCleaned = $conf -replace "`r"
+    $confCleaned = $confCleaned -replace '[^\x20-\x7E\n]', ''
+
     $warpConfigPath = Join-Path $configPath "WARP_warframe_chat.conf"
-    $conf | Out-File -FilePath $warpConfigPath
+    $confCleaned | Out-File -FilePath $warpConfigPath -Encoding ASCII
 
     Write-host "Generation sucessfull. Please check the config path."
 }
