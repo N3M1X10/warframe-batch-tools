@@ -3,12 +3,13 @@
 # Change CPU Priority on Launch
 # - Possible values: "low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"
 # - Default: normal
-$Priority = "normal"
+param(
+    $Priority = "normal",
+    $GameProcName = "Soulframe.x64",
+    $ClientProcName = "Soulframe Launcher"
+)
 
 # End of Parameters
-
-$GameProcName = "Soulframe.x64"
-$ClientProcName = "Soulframe Launcher"
 
 function FindLauncher{
     param(
