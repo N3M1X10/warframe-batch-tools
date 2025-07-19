@@ -76,31 +76,39 @@ set debug=0
 :request-admin-rights
 if "%debug%"=="1" (
     rem debug mode
-    if "%require_admin%"=="1" (
-        set arg=%1
-            if "%arg%"=="admin" (
+    if "%require_admin%" == "1" (
+        set "adm_arg=%1"
+        set "hidden_arg=%2"
+            if "%adm_arg%"=="admin" (
                 echo [93m[powershell] : Restarted with admin rights[0m
                 call :debug-warning
             ) else (
+                echo [powershell] : Requesting admin rights . . .
                 powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs"
                 exit
-            )
 
+            )
     ) else (
         call :debug-warning
     )
-
 ) else (
     rem if not debug mode
-    if "%require_admin%"=="1" (
-        set arg=%1
-        if "%arg%"=="admin" (
+    if "%require_admin%" == "1" (
+        set "adm_arg=%1"
+        set "hidden_arg=%2"
+        if "%2" neq "hidden" (
+            echo [powershell] : Requesting admin rights . . .
+            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs -WindowStyle Hidden"
+            exit
+
+        ) else if "%adm_arg%"=="admin" (
             echo [powershell] : Restarted with admin rights and hidden
         ) else (
-            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs -WindowStyle Hidden"
+            echo [powershell] : Requesting admin rights . . .
+            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs -WindowStyle Hidden"
             exit
-        )
 
+        )
     ) else (
         call :debug-warning
     )
@@ -385,10 +393,11 @@ if not exist "%cpu-priority-ps1%" (
         start powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" !cpu-args!
 
         :: keep the window infinite
-        rem start powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" !cpu-args!
+        rem start powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" -WindowStyle Hidden !cpu-args!
 
     ) else (
-        powershell -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" !cpu-args!
+        :: silent
+        powershell -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" -WindowStyle Hidden !cpu-args!
 
     )
 )
