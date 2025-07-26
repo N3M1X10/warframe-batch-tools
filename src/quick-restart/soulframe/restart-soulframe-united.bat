@@ -45,9 +45,15 @@ set steam_warframe_path=
 :: default: '0'
 set without_waking_up_steam=0
 
+:: sets whether the window will be hidden
+:: default: '1'
+set windowless=1
+
 
 :Dev-Params
-:: !!! We strongly recommend that you DO NOT edit these parameters!!!
+::!!! We strongly recommend that you DO NOT edit these parameters!!!
+
+set application_name=WFBT-Quick-Restart
 
 :: Sets which game we looking for
 :: ['Warframe' / 'Soulframe']
@@ -68,82 +74,46 @@ set require_admin=1
 ::default: '0'
 set debug=0
 
+:Constant-Params
+
+set "adm_arg=%1"
+set "hdn_arg=%2"
+
 :End-Of-Params
 
 
 
-:: main functions sequence
-:request-admin-rights
-if "%debug%"=="1" (
-    rem debug mode
-    if "%require_admin%" == "1" (
-        set "adm_arg=%1"
-        set "hidden_arg=%2"
-            if "%adm_arg%"=="admin" (
-                echo [93m[powershell] : Restarted with admin rights[0m
-                call :debug-warning
-            ) else (
-                echo [powershell] : Requesting admin rights . . .
-                powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs"
-                exit
+:Start-Of-Application-Body
 
-            )
-    ) else (
-        call :debug-warning
-    )
-) else (
-    rem if not debug mode
-    if "%require_admin%" == "1" (
-        set "adm_arg=%1"
-        set "hidden_arg=%2"
-        if "%2" neq "hidden" (
-            echo [powershell] : Requesting admin rights . . .
-            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs -WindowStyle Hidden"
-            exit
-
-        ) else if "%adm_arg%"=="admin" (
-            echo [powershell] : Restarted with admin rights and hidden
-        ) else (
-            echo [powershell] : Requesting admin rights . . .
-            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs -WindowStyle Hidden"
-            exit
-
-        )
-    ) else (
-        call :debug-warning
-    )
-)
-
+call :request-admin-rights
 
 call :check-game-parameter
-
 
 :kill-steam
 if "%terminate_steam%"=="1" (
     :: Terminate of steam process tree
     echo.&echo [93mTrying to terminate a Steam . . .[0m
-    call :check-process steamwebhelper.exe kill
-    call :check-process steam.exe kill
+    call :check-process "steamwebhelper.exe" kill
+    call :check-process "steam.exe" kill
 )
 
 
 
 :kill-game
 echo.&echo [93mTrying to terminate a Game . . .[0m
-call :check-process %game%.x64.exe kill
+call :check-process "%game%.x64.exe" kill
 echo Done
-
 
 :kill-Launcher
 echo.&echo [93mTrying to terminate the Game Launcher . . .[0m
 powershell -Command "Get-Process Launcher | Where-Object { $path = $_.Path; if ($path.Contains('%game%')) { Write-Host 'Killing Process...'; Stop-Process -Id $_.Id; } }">nul
 echo Done
 
-
 :kill-RemoteCrashSender
 echo.&echo [93mTrying to terminate the Game Remote Crash Sender . . .[0m
 powershell -Command "Get-Process RemoteCrashSender | Where-Object { $path = $_.Path; if ($path.Contains('%game%')) { Write-Host 'Killing Process...'; Stop-Process -Id $_.Id; } }">nul
 echo Done
+
 
 
 :start-game
@@ -194,12 +164,59 @@ if "%change_priority%"=="1" (
     call :cpu-priority
 )
 
+:End-Of-Application-Body
+
+
 
 :: escape from script
 :close
 call :debug
 endlocal
 exit
+
+
+
+:request-admin-rights
+if "%debug%"=="1" (
+    rem debug mode
+    if "%require_admin%" == "1" (
+        if "%adm_arg%" == "admin" (
+            call :debug-warning
+            echo [93m[powershell] : Restarted with admin rights
+            echo By the way, window is kept awake, because we is in debug[0m
+        ) else (
+            echo [powershell] : Requesting admin rights . . .
+            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs"
+            exit
+        )
+    ) else (
+        call :debug-warning
+    )
+) else (
+    rem if not debug mode
+    if "%require_admin%" == "1" (
+        if "%windowless%" == "1" (
+            rem if we need to be quiet
+            if "%hdn_arg%" == "hidden" (
+                rem admin requested
+            ) else (
+                echo [powershell] : Requesting admin rights and trying to hide the window . . .
+                powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs -WindowStyle Hidden"
+                exit
+            )
+        ) else (
+            rem if we don't need to be quiet
+            if "%adm_arg%" == "admin" (
+                rem admin requested
+            ) else (
+                echo [powershell] : Requesting admin rights . . .
+                powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs"
+                exit
+            )
+        )
+    )
+)
+exit /b
 
 
 
@@ -223,11 +240,11 @@ if "%2"=="game" (
             pause>nul&goto:close
         ) else (
             if "%1"=="" (
-                msg * [Restart-Warframe Error] ^: %game% path is empty. Please setup it inside this script
+                msg * [!application_name! Error] ^: %game% path is empty. Please setup it inside this script
             ) else (
-                msg * [Restart-Warframe Error] ^: %game% launcher doesn't exist in: "%1". Please make sure that path is correctly configured
+                msg * [!application_name! Error] ^: %game% launcher doesn't exist in: "%1". Please make sure that path is correctly configured
             )
-            msg * [Restart-Warframe Notification] ^: Script was interrupted
+            msg * [!application_name! Notification] ^: Script was interrupted
             goto:close
         )
 
@@ -269,7 +286,7 @@ if "%game%" equ "Warframe" (
         goto :close
 
     ) else (
-        msg * [Restart-Warframe Error] ^: Error. Param 'game' is empty. Script was interrupted
+        msg * [!application_name! Error] ^: Error. Param 'game' is empty. Script was interrupted
         goto :close
 
     )
@@ -282,7 +299,7 @@ if "%game%" equ "Warframe" (
         pause&goto :close
 
     ) else (
-        msg * [Restart-Warframe Error] ^: Error. Param 'game' is incorrect. Script was interrupted
+        msg * [!application_name! Error] ^: Error. Param 'game' is incorrect. Script was interrupted
         goto :close
 
     )
@@ -295,28 +312,58 @@ exit /b
 
 
 :check-process
-set checking_process=%1
+set checking_process=%~1
 set defined_tasks_count=
-echo.&echo [93mAre '%checking_process%' is running?[0m 
+
+echo.&echo [93mAre '%checking_process%' is running?[0m
+
 for /F "delims=" %%i in ('tasklist /fi "IMAGENAME eq %checking_process%" /fo CSV ^| find /c "%checking_process%"') do set defined_tasks_count=%%i
-if %defined_tasks_count% geq 1 (
-    echo [91mYes[0m
-    if "%2"=="kill" (
+
+if "%2"=="kill" (
+    :: stopping it and making sure that this is not running
+    echo Function action is: "%2"
+
+    if %defined_tasks_count% geq 1 (
+        echo [91mYes[0m
         :: kill and make sure that process is killed
-        echo [93mTrying to stop it . . .[0m
+        echo [93m[cycle] : Trying to stop it . . .[0m
         taskkill /f /t /im "%checking_process%"
-        echo Done
-        echo Repeat
-        powershell -Command "$time = '500'; Write-Host "Pause for a $time ms"; Start-Sleep -m $time; exit"
+        echo Repeat checking . . .
+        call :wait 500
         goto :check-process
+
     ) else (
-        echo Killing is skipped by user
+        echo [92mNo[0m
         exit /b
     )
+
+) else if "%2"=="wait" (
+    :: waiting to appear
+    echo Function action is: "%2"
+
+    if %defined_tasks_count% geq 1 (
+        echo [92mYes[0m
+        exit /b
+    ) else (
+        echo [91mNo[0m
+        echo [93m[cycle] : Waiting for "%checking_process%" to appear . . .[0m
+        call :wait 1000
+        goto :check-process
+    )
+
 ) else (
-    echo [92mNo[0m
+    :: when we without any actions in %2
+    if %defined_tasks_count% geq 1 (
+        echo [93mYes[0m
+        exit /b 1
+    ) else (
+        echo [93mNo[0m
+        exit /b 0
+    )
     exit /b
 )
+msg * [!application_name! Error] ^: Checking function for """"!checking_process!"""" has an exeption
+goto :close
 
 
 
@@ -349,7 +396,7 @@ rem do nothing
         echo [101;93m!cpu-msg![0m
 
     ) else (
-        msg * [Restart-Warframe Notification] ^: !cpu-msg!
+        msg * [!application_name! Notification] ^: !cpu-msg!
 
     )
     exit /b
@@ -380,7 +427,7 @@ if not exist "%cpu-priority-ps1%" (
         echo But this is not a significant error. We have to continue.[0m
 
     ) else (
-        msg * [Restart-Warframe Notification] ^: The script """"!cpu-priority-ps1!"""" has not found. Cannot change the cpu priority.
+        msg * [!application_name! Notification] ^: The script """"!cpu-priority-ps1!"""" has not found. Cannot change the cpu priority.
 
     )
 ) else (
@@ -401,16 +448,28 @@ if not exist "%cpu-priority-ps1%" (
 
     )
 )
+exit /b
 
 
+
+:wait
+:: just a function for additional delays in code. 
+::it takes params:
+:: time - wait in milliseconds
+if %1=="" (set time=1000) else (set time=%1)
+powershell -Command "$time = '!time!'; Write-Host "Pause for a $time ms"; Start-Sleep -m $time; exit"
+set time=
 exit /b
 
 
 
 :debug
 if "%debug%"=="1" (
-    echo.&echo [debug] : PAUSE EOF
+    echo.
+    echo [93m[debug] : Pause on the end of a file . . .[0m
     timeout /t 60
+    set debug=0
+    goto :close
 )
 exit /b
 
@@ -427,7 +486,7 @@ if "%require_admin%" neq "1" (
     echo [caution] : !require_admin_msg2![0m
 )
 if "%debug%" neq "1" (
-    msg * [Restart-Warframe Notification] ^: !require_admin_msg1! !require_admin_msg2!
+    msg * [!application_name! Notification] ^: !require_admin_msg1! !require_admin_msg2!
 )
 echo.
 exit /b
