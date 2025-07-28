@@ -21,8 +21,7 @@ set priority=normal
 
 :: ps1 script path
 :: required to correctly setup this var for option below
-set warframe-cpu-priority-ps1=%~dp0bin\warframe-cpu-priority.ps1
-set soulframe-cpu-priority-ps1=%~dp0bin\soulframe-cpu-priority.ps1
+set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
 
 :: Sets that you need to make sure that all Steam processes is terminated or terminate them before launching Warframe
 :: [1 / any else val]
@@ -284,11 +283,9 @@ if "%game%" equ "Warframe" (
         echo [91mScript is going to be interrupted[0m
         pause
         goto :close
-
     ) else (
-        msg * [!application_name! Error] ^: Error. Param 'game' is empty. Script was interrupted
+        call :msg "Param 'game' is incorrect. Script was interrupted" "Error"
         goto :close
-
     )
 
 ) else (
@@ -296,12 +293,11 @@ if "%game%" equ "Warframe" (
     if "%debug%"=="1" (
         echo [91mError. Param 'game' is incorrect[0m
         echo [91mScript is going to be interrupted[0m
-        pause&goto :close
-
-    ) else (
-        msg * [!application_name! Error] ^: Error. Param 'game' is incorrect. Script was interrupted
+        pause
         goto :close
-
+    ) else (
+        call :msg "Param 'game' is incorrect. Script was interrupted" "Error"
+        goto :close
     )
 
 )
@@ -362,7 +358,8 @@ if "%2"=="kill" (
     )
     exit /b
 )
-msg * [!application_name! Error] ^: Checking function for """"!checking_process!"""" has an exeption
+call :msg "Checking function for """"!checking_process!"""" has an exeption" "Error"
+set debug=0
 goto :close
 
 
@@ -396,20 +393,18 @@ rem do nothing
         echo [101;93m!cpu-msg![0m
 
     ) else (
-        msg * [!application_name! Notification] ^: !cpu-msg!
+        call :msg "!cpu-msg!" "Notification"
 
     )
     exit /b
 )
 
 if "%game%"=="Warframe" (
-    set cpu-priority-ps1=%warframe-cpu-priority-ps1%
     set cpu-arg1=!priority!
     set cpu-arg2=Warframe.x64
     set cpu-arg3=Warframe Launcher
 
 ) else if "%game%"=="Soulframe" (
-    set cpu-priority-ps1=%soulframe-cpu-priority-ps1%
     set cpu-arg1=!priority!
     set cpu-arg2=Soulframe.x64
     set cpu-arg3=Soulframe Launcher
@@ -427,7 +422,7 @@ if not exist "%cpu-priority-ps1%" (
         echo But this is not a significant error. We have to continue.[0m
 
     ) else (
-        msg * [!application_name! Notification] ^: The script """"!cpu-priority-ps1!"""" has not found. Cannot change the cpu priority.
+        call :msg "The script """"!cpu-priority-ps1!"""" has not found. Cannot change the cpu priority." "Notification"
 
     )
 ) else (
@@ -456,9 +451,15 @@ exit /b
 :: just a function for additional delays in code. 
 ::it takes params:
 :: time - wait in milliseconds
-if %1=="" (set time=1000) else (set time=%1)
+if "%1"=="" (set time=1000) else (set time=%1)
 powershell -Command "$time = '!time!'; Write-Host "Pause for a $time ms"; Start-Sleep -m $time; exit"
 set time=
+exit /b
+
+
+
+:msg
+msg * [!application_name! %~2] ^: %~1
 exit /b
 
 

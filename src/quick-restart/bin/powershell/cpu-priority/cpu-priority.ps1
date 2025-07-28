@@ -5,8 +5,8 @@
 # - Default: normal
 param(
     $Priority = "normal",
-    $GameProcName = "Soulframe.x64",
-    $ClientProcName = "Soulframe Launcher"
+    $GameProcName = "Warframe.x64",
+    $ClientProcName = "Warframe Launcher"
 )
 
 # End of Parameters
