@@ -16,7 +16,7 @@ set change_priority=0
 :: Change CPU Priority on Launch
 :: - Possible values: ["low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"]
 :: - Default: normal
-set priority=AboveNormal
+set priority=normal
 
 :: ps1 script path
 :: required to correctly setup this var for option below
