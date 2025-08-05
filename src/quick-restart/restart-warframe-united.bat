@@ -1,6 +1,5 @@
 @echo off
 chcp 65001>nul
-title Restart Warframe (United)
 setlocal EnableDelayedExpansion
 
 
@@ -17,7 +16,7 @@ set change_priority=0
 :: Change CPU Priority on Launch
 :: - Possible values: ["low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"]
 :: - Default: normal
-set priority=normal
+set priority=AboveNormal
 
 :: ps1 script path
 :: required to correctly setup this var for option below
@@ -52,11 +51,18 @@ set windowless=1
 :Dev-Params
 ::!!! We strongly recommend that you DO NOT edit these parameters!!!
 
-set application_name=WFBT-Quick-Restart
+set application_name=%~n0%~x0
 
+::Description
 :: Sets which game we looking for
 :: ['Warframe' / 'Soulframe']
-set game=Warframe
+::Additional
+:: Or in of order
+:: ['1' / '2']
+:: Where:
+:: 1 - Warframe
+:: 2 - Soulframe
+set game=1
 
 :: default paths
 set warframe=%LocalAppData%\Warframe\Downloaded\Public
@@ -73,6 +79,11 @@ set require_admin=1
 ::default: '0'
 set debug=0
 
+:: cpu-priority window mode switcher
+:: [1 / any else val]
+:: default: '0'
+set keep_ps1=0
+
 :Constant-Params
 
 set "adm_arg=%1"
@@ -85,8 +96,8 @@ set "hdn_arg=%2"
 :Start-Of-Application-Body
 
 call :request-admin-rights
-
 call :check-game-parameter
+title Restart %game% (United)
 
 :kill-steam
 if "%terminate_steam%"=="1" (
@@ -221,60 +232,80 @@ exit /b
 
 :: other functions
 :check-path
-cd /d "%1"
-echo.&echo [93mTrying to check "%1" path . . .[0m
-if "%2"=="game" (
-    :: if we looking for a game path
+set checking-path=%~1
+set check-type=%~2
+echo.&echo [93mTrying to check "%checking-path%" path . . .[0m
+if "%check-type%"=="game" (
     echo We looking for a game launcher
+    cd /d "%checking-path%"
 
     if not exist "Tools\Launcher.exe" (
-        :: When path is incorrect
+        rem When path is incorrect
         if "%debug%"=="1" (
             echo.
             echo [101;93m! %game% launcher doesn't exist, unable to continue
             echo Make sure that the %game% launcher exists in: 
-            echo "%1"[0m
+            echo "%checking-path%"[0m
             echo.
             echo Press any key to exit . . .
-            pause>nul&goto:close
+            pause>nul
         ) else (
-            if "%1"=="" (
-                msg * [!application_name! Error] ^: %game% path is empty. Please setup it inside this script
+            if "%checking-path%"=="" (
+                call :msg "Error. %game% path is empty. Please setup it inside this script"
             ) else (
-                msg * [!application_name! Error] ^: %game% launcher doesn't exist in: "%1". Please make sure that path is correctly configured
+                call :msg "Error. %game% launcher doesn't exist in: "%checking-path%". Please make sure that path is correctly configured. Script was interrupted"
             )
-            msg * [!application_name! Notification] ^: Script was interrupted
-            goto:close
         )
-
+        set debug=0
+        goto:close
     ) else (
-        :: When path is correct
-        echo Checks done
+        rem When path is correct
+        echo Path checks is done
         exit /b
     )
 
+rem For now, this is a reserved part of the code
+
+) else if "%check-type%"=="folder" (
+rem dn
+) else if "%check-type%"=="file" (
+rem dn
 ) else (
-    :: For now, this is a reserved part of the code
-    echo incorrect check type
+    echo Error. Incorrect check type
     exit /b
 )
+
+if exist "%checking-path%" (
+    echo %check-type% "%checking-path%" has found
+    exit /b 1
+) else (
+    echo %check-type% "%checking-path%" has not found
+    exit /b 0
+)
+
 exit /b
 
 
 
 :check-game-parameter
-echo Checking and fixing the game ('%game%') parameter . . .
-echo Trying to fix param character case . . .
+echo.&echo [93mChecking and fixing the game ('%game%') parameter . . .[0m
+
+echo.&echo Trying to fix param character case . . .
 for /F "delims=" %%i in ('echo %game% ^| find /i "soulframe"') do set game=Soulframe
 for /F "delims=" %%i in ('echo %game% ^| find /i "warframe"') do set game=Warframe
 
-
-echo Are this param is valid?
-if "%game%" equ "Warframe" (
+echo.&echo Are this param is valid?
+if "%game%" == "Warframe" (
     rem do nothing
 
-) else if "%game%" equ "Soulframe" (
+) else if "%game%" == "Soulframe" (
     rem do nothing
+
+) else if "%game%" == "1" (
+    set game=Warframe
+
+) else if "%game%" == "2" (
+    set game=Soulframe
 
 ) else if "%game%"=="" (
     :: empty
@@ -282,11 +313,11 @@ if "%game%" equ "Warframe" (
         echo [91mError. Param 'game' is empty[0m
         echo [91mScript is going to be interrupted[0m
         pause
-        goto :close
     ) else (
-        call :msg "Param 'game' is incorrect. Script was interrupted" "Error"
-        goto :close
+        call :msg "Error. Param 'game' is incorrect. Script was interrupted"
     )
+    set debug=0
+    goto :close
 
 ) else (
     :: else error
@@ -294,15 +325,15 @@ if "%game%" equ "Warframe" (
         echo [91mError. Param 'game' is incorrect[0m
         echo [91mScript is going to be interrupted[0m
         pause
-        goto :close
     ) else (
-        call :msg "Param 'game' is incorrect. Script was interrupted" "Error"
-        goto :close
+        call :msg "Error. Param 'game' is incorrect. Script was interrupted"
     )
+    set debug=0
+    goto :close
 
 )
 
-echo Checks done
+echo Checks of 'game' param is done
 exit /b
 
 
@@ -358,7 +389,7 @@ if "%2"=="kill" (
     )
     exit /b
 )
-call :msg "Checking function for """"!checking_process!"""" has an exeption" "Error"
+call :msg "Error. Checking function for """"!checking_process!"""" has an exeption"
 set debug=0
 goto :close
 
@@ -393,7 +424,7 @@ rem do nothing
         echo [101;93m!cpu-msg![0m
 
     ) else (
-        call :msg "!cpu-msg!" "Notification"
+        call :msg "!cpu-msg!"
 
     )
     exit /b
@@ -415,32 +446,31 @@ set cpu-args="!cpu-arg1!" "!cpu-arg2!" "!cpu-arg3!"
 
 echo.&echo Starting '%cpu-priority-ps1%' script
 if not exist "%cpu-priority-ps1%" (
-    :: if NOT exist
+    rem if NOT exist
     if "%debug%"=="1" (
         echo.
         echo [101;93m "!cpu-priority-ps1!" doesn't exist.
         echo But this is not a significant error. We have to continue.[0m
 
     ) else (
-        call :msg "The script """"!cpu-priority-ps1!"""" has not found. Cannot change the cpu priority." "Notification"
+        call :msg "The script """"!cpu-priority-ps1!"""" has not found. Cannot change the cpu priority."
 
     )
+    exit /b
 ) else (
-    :: if exist
+    rem if exist
     echo Args: !cpu-args!
-
     if "%debug%"=="1" (
-
-        :: keep the window until script is done
-        start powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" !cpu-args!
-
-        :: keep the window infinite
-        rem start powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" -WindowStyle Hidden !cpu-args!
-
+        if "%keep_ps1%"=="1" (
+            :: keep the window anyway
+            start powershell.exe -NoProfile -NoExit -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" -WindowStyle Hidden !cpu-args!
+        ) else (
+            :: keep the normal window until script is done
+            start /min powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" !cpu-args!
+        )
     ) else (
-        :: silent
+        :: start the script silently
         powershell -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" -WindowStyle Hidden !cpu-args!
-
     )
 )
 exit /b
@@ -459,7 +489,7 @@ exit /b
 
 
 :msg
-msg * [!application_name! %~2] ^: %~1
+msg * [!application_name!] ^: %~1
 exit /b
 
 
