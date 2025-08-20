@@ -18,9 +18,18 @@ set change_priority=0
 :: - Default: normal
 set priority=normal
 
-:: ps1 script path
+:: ps1 script cpu-priority path
 :: required to correctly setup this var for option below
 set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
+
+:: Start Scanner-Autorestarter
+:: possible: [1 / 0]
+:: default: '0'
+set autorestart_scanner=0
+
+:: ps1 script autorestart path
+:: required to correctly setup this var for option below
+set autorestart-ps1=%~dp0bin\powershell\autorestart\autorestart-warframe.ps1
 
 :: Sets that you need to make sure that all Steam processes is terminated or terminate them before launching Warframe
 :: [1 / any else val]
@@ -169,9 +178,13 @@ if "%game%"=="Warframe" (
 
 
 
-:: Call the ps1 script
+:: Call the ps1 scripts
 if "%change_priority%"=="1" (
     call :cpu-priority
+)
+
+if "%autorestart_scanner%"=="1" (
+    call :autorestart_scanner
 )
 
 :End-Of-Application-Body
@@ -474,6 +487,39 @@ if not exist "%cpu-priority-ps1%" (
     )
 )
 exit /b
+
+
+
+:autorestart_scanner
+echo.&echo Starting '%autorestart-ps1%' script
+if not exist "%autorestart-ps1%" (
+    rem if NOT exist
+    if "%debug%"=="1" (
+        echo.
+        echo [101;93m "!autorestart-ps1!" doesn't exist.
+        echo But this is not a significant error. We have to continue.[0m
+        exit /b
+    ) else (
+        call :msg "The script """"!autorestart-ps1!"""" has not found. Cannot start autorestart scanner."
+    )
+    exit /b
+) else (
+    rem if exist
+    if "%debug%"=="1" (
+        if "%keep_ps1%"=="1" (
+            :: keep the window anyway
+            start powershell.exe -NoProfile -NoExit -ExecutionPolicy Bypass -File "%autorestart-ps1%"
+        ) else (
+            :: keep the normal window until script is done
+            start /min powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%autorestart-ps1%"
+        )
+    ) else (
+        :: start the script silently, but wait for completion
+        powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%autorestart-ps1%" -WindowStyle Hidden
+    )
+)
+exit /b
+
 
 
 
