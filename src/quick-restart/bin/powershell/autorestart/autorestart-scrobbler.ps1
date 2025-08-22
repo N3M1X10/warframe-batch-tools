@@ -94,7 +94,7 @@ function StartAutoCloser {
         }
 
         do {
-            Start-Sleep -Milliseconds 200
+            Start-Sleep -Milliseconds 500
             $HasLauncher = FindLauncher -LauncherDescName $ClientProcName
             $GameProc = Get-Process -Name $GameProcName -ErrorAction SilentlyContinue
             # Write-Log "Launcher: $HasLauncher, Game: $($GameProc -ne $null)"
@@ -203,7 +203,7 @@ function JobsCycle {
                 Remove-Job $autocloser_job -ErrorAction SilentlyContinue
                 break
             }
-            Start-Sleep -Milliseconds 500
+            Start-Sleep -Milliseconds 1000
         }
     }
     catch {
