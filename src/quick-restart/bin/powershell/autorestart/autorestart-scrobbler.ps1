@@ -1,5 +1,5 @@
 # Params
-$myScriptName = $($MyInvocation.MyCommand.Name.Trim())
+$global:myScriptName = $($MyInvocation.MyCommand.Name.Trim())
 $scriptPath = $PSScriptRoot
 
 $global:ownLogPath = Join-Path -Path $scriptPath -ChildPath "autorestart-scrobbler.log"
@@ -65,8 +65,8 @@ function RestartGame {
 
 
 function StartAutoCloser {
-    Write-Host "Started async autoexit function..." -ForegroundColor Cyan
-    Write-Log "Started async autoexit function..."
+    Write-Host "Started autoexit scanner..." -ForegroundColor Cyan
+    Write-Log "Started autoexit scanner..."
     $autocloser_job = Start-Job -ScriptBlock {
         param($GameProcName, $ClientProcName)
         
@@ -127,49 +127,78 @@ function StartScrobbler {
         # check ee log
         $logPath = "$env:LOCALAPPDATA\Warframe\EE.log"
         if (-not (Test-Path $logPath)) {
-            Write-Log "Log file not found: $logPath"
-            Write-Log "Scrobbler was interrupted"
+            Write-Log "[SCROBBLER] Log file not found: $logPath"
+            Write-Log "[SCROBBLER] Scrobbler was interrupted"
             exit
         }
 
+        # cycle log reader
         Get-Content -Path $logPath -Tail 1 -Wait | ForEach-Object {
             $logresult = $_
 
             $shouldRestart = $false
             $shouldInterrupt = $false
 
-            # Write-Log "Started a scanning circle"
+            # chat user commands check
+            if (
+                ($logresult -match '_stop-ars') -or
+                ($logresult -match '_cancel-ars')
+                ) {
+                if (-not ($logresult -match 'No online player found with alias')) {
+                    Write-Log "[SCROBBLER][WARNING] Have found string like command to stop the script. But it not from the invitations menu"
+                } else {
+                    Write-Log "[SCROBBLER] Found the user command to stop the Scrobbler"
+                    Write-Log "[SCROBBLER] This line: $logresult"
+                    msg * "[$using:myScriptName] Found the user command to stop the Scrobbler"
+                    $shouldInterrupt = $true
+                }
+            }
+            
+            if (
+                ($logresult -match '_reboot') -or
+                ($logresult -match '_restart')
+            ) {
+                if (-not ($logresult -match 'No online player found with alias')) {
+                    Write-Log "[SCROBBLER][WARNING] Have found string like command to restart the game. But it not from the invitations menu"
+                } else {
+                    Write-Log "[SCROBBLER][IT MATCHES] I have found the user command to restart the game in the log!"
+                    Write-Log "[SCROBBLER][IT MATCHES] This line: '$logresult'"
+                    $shouldRestart = $true
+                }
+            }
 
-            # Проверка каждой строки из массива
+            # checking the target strings in log
             foreach ($target_string in $target_strings) {
                 # Write-Log "Matching: '$target_string' in target_strings"
                 if ($logresult -match $target_string) {
-                    Write-Log "I have found the target string in the log!"
-                    Write-Log "And i have set the 'shouldRestart' to 'true'"
+                    Write-Log "[SCROBBLER] I have found the target string in the log!"
+                    Write-Log "[SCROBBLER] This line: $logresult"
                     $shouldRestart = $true
                     # Проверка на исключение
                     foreach ($exception_string in $exception_strings) {
-                        # Если в строке есть "IRC"
+                        # Если в строке есть исключения
                         if ($logresult -match $exception_string) {
-                            Write-Log "[WARNING] But this is a string that contains: '$exception_string' exception"
+                            Write-Log "[SCROBBLER][WARNING] But this is a string that contains: '$exception_string' exception"
+                            Write-Log "[SCROBBLER] The restarting has been canceled"
                             $shouldRestart = $false
-                            Write-Log "The 'shouldRestart' has been canceled to 'false'"
-                            break
                         }
                     }
                 }
             }
 
+            # final checks
             if ($shouldRestart) {
                 Write-Log ""
-                Write-Log "!!!!! I HAVE FOUND THE TARGET LINE. IM RESTARTING THE GAME !!!!!"
-                Write-Log "THIS LINE: $logresult"
+                Write-Log "[SCROBBLER][IT MATCHES] !!!!! I HAVE FOUND THE TARGET LINE !!!!!"
+                Write-Log "[SCROBBLER][IT MATCHES] This line: $logresult"
                 Write-Log ""
+                Write-Log "I'm gonna restarting the game. Starting: '$restart_warframe_batch_path'"
                 Start-Process -FilePath $restart_warframe_batch_path -Verb RunAs
-                Write-Log "Scrobbler was interrupted"
-                exit
+                $shouldInterrupt = $true
             }
+
             if ($shouldInterrupt) {
+                Write-Log "[SCROBBLER] Scrobbler was interrupted"
                 exit
             }
         }

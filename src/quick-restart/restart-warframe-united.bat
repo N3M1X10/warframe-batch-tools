@@ -10,13 +10,12 @@ setlocal EnableDelayedExpansion
 :: possible: [1 / 0]
 :: default: '0'
 set change_priority=0
-
 :: Change CPU Priority on Launch
 :: - Possible values: ["low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"]
 :: - Default: normal
 set priority=normal
 :: ps1 script cpu-priority path
-:: required to correctly setup this var for option above
+:: required to correctly setup this var for option below
 set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
 
 :: Start Scrobbler-Autorestarter
@@ -24,7 +23,7 @@ set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
 :: default: '0'
 set autorestart_scrobbler=0
 :: ps1 script autorestart path
-:: required to correctly setup this var for option above
+:: required to correctly setup this var for option below
 set autorestart-ps1=%~dp0bin\powershell\autorestart\autorestart-scrobbler.ps1
 
 :: Sets that you need to make sure that all Steam processes is terminated or terminate them before launching Warframe
@@ -56,16 +55,6 @@ set windowless=1
 :Dev-Params
 ::!!! We strongly recommend that you DO NOT edit these parameters!!!
 
-::debug mode (only for devs)
-:: [1 / any else val]
-::default: '0'
-set debug=0
-
-:: cpu-priority window mode switcher
-:: [1 / any else val]
-:: default: '0'
-set keep_ps1=0
-
 ::Description
 :: Sets which game we looking for
 :: ['Warframe' / 'Soulframe']
@@ -76,6 +65,16 @@ set keep_ps1=0
 :: 1 - Warframe
 :: 2 - Soulframe
 set game=1
+
+::debug mode (only for devs)
+:: [1 / any else val]
+::default: '0'
+set debug=0
+
+:: cpu-priority window mode switcher
+:: [1 / any else val]
+:: default: '0'
+set keep_ps1=0
 
 :: this option will set this script to request admin rights
 :: [1 / any else val]
@@ -468,6 +467,10 @@ exit /b
 
 
 :autorestart_scrobbler
+if "%game%" neq "Warframe" (
+    echo [ERROR] Any game instead of Warframe is not supported by the 'autorestart_scrobbler' at this time
+    exit /b
+)
 echo.&echo Starting '%autorestart-ps1%' script
 call :start-pwsh "%autorestart-ps1%" ""
 exit /b
