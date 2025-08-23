@@ -2,8 +2,6 @@
 chcp 65001>nul
 setlocal EnableDelayedExpansion
 
-
-
 :Params
 :: If you don't know what they mean - check readme's
 :: Script source: https://github.com/N3M1X10/warframe-batch-tools
@@ -12,15 +10,21 @@ setlocal EnableDelayedExpansion
 :: possible: [1 / 0]
 :: default: '0'
 set change_priority=0
-
 :: Change CPU Priority on Launch
 :: - Possible values: ["low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"]
 :: - Default: normal
 set priority=normal
-
-:: ps1 script path
+:: ps1 script cpu-priority path
 :: required to correctly setup this var for option below
 set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
+
+:: Start Scrobbler-Autorestarter
+:: possible: [1 / any else val]
+:: default: '0'
+set autorestart_scrobbler=0
+:: ps1 script autorestart path
+:: required to correctly setup this var for option below
+set autorestart-ps1=%~dp0bin\powershell\autorestart\autorestart-scrobbler.ps1
 
 :: Sets that you need to make sure that all Steam processes is terminated or terminate them before launching Warframe
 :: [1 / any else val]
@@ -51,8 +55,6 @@ set windowless=1
 :Dev-Params
 ::!!! We strongly recommend that you DO NOT edit these parameters!!!
 
-set application_name=%~n0%~x0
-
 ::Description
 :: Sets which game we looking for
 :: ['Warframe' / 'Soulframe']
@@ -64,16 +66,6 @@ set application_name=%~n0%~x0
 :: 2 - Soulframe
 set game=2
 
-:: default paths
-set warframe=%LocalAppData%\Warframe\Downloaded\Public
-set soulframe=%LocalAppData%\Soulframe\Downloaded\Public
-
-:: this option will set this script to request admin rights
-:: [1 / any else val]
-:: this option REQUIRED to correct working of this script, and added only for very specific debugging
-:: default: '1'
-set require_admin=1
-
 ::debug mode (only for devs)
 :: [1 / any else val]
 ::default: '0'
@@ -84,7 +76,19 @@ set debug=0
 :: default: '0'
 set keep_ps1=0
 
+:: this option will set this script to request admin rights
+:: [1 / any else val]
+:: this option REQUIRED to correct working of this script, and added only for very specific debugging
+:: default: '1'
+set require_admin=1
+
 :Constant-Params
+
+:: default paths
+set warframe=%LocalAppData%\Warframe\Downloaded\Public
+set soulframe=%LocalAppData%\Soulframe\Downloaded\Public
+
+set application_name=%~n0%~x0
 
 set "adm_arg=%1"
 set "hdn_arg=%2"
@@ -136,9 +140,8 @@ if "%game%"=="Warframe" (
             :: Run without calling Steam
             echo.&echo but without waking up the Steam . . .
             call :check-path !steam_warframe_path! game
-            cd /d "!warframe!"
-            start "Tools\" "Tools\Launcher.exe" ^
-            -cluster:public -registry:Steam
+            cd /d "!steam_warframe_path!"
+            call :run_async "Tools\Launcher.exe" "-cluster:public -registry:Steam"
 
         ) else (
             :: Run wf through steam uri
@@ -150,7 +153,7 @@ if "%game%"=="Warframe" (
         :: Starting via separated client launcher
         echo.&echo Trying to run Warframe via separated client launcher . . .
         call :check-path !warframe! game
-        start "Tools\" "Tools\Launcher.exe"
+        call :run_async "Tools\Launcher.exe"
 
     )
     echo.&echo Warframe is started
@@ -162,16 +165,19 @@ if "%game%"=="Warframe" (
     echo.&echo Trying to run Soulframe via separated client launcher . . .
     call :check-path !soulframe! game
     cd /d "!soulframe!"
-    start "Tools\" "Tools\Launcher.exe"
+    call :run_async "Tools\Launcher.exe"
     echo.&echo Soulframe is started
 
 )
 
 
-
-:: Call the ps1 script
+:: Call the ps1 scripts
 if "%change_priority%"=="1" (
     call :cpu-priority
+)
+
+if "%autorestart_scrobbler%"=="1" (
+    call :autorestart_scrobbler
 )
 
 :End-Of-Application-Body
@@ -196,7 +202,7 @@ if "%debug%"=="1" (
             echo By the way, window is kept awake, because we is in debug[0m
         ) else (
             echo [powershell] : Requesting admin rights . . .
-            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin\"' -Verb RunAs"
+            powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin\"' -Verb RunAs"
             exit
         )
     ) else (
@@ -211,7 +217,7 @@ if "%debug%"=="1" (
                 rem admin requested
             ) else (
                 echo [powershell] : Requesting admin rights and trying to hide the window . . .
-                powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs -WindowStyle Hidden"
+                powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin hidden\"' -Verb RunAs -WindowStyle Hidden"
                 exit
             )
         ) else (
@@ -220,7 +226,7 @@ if "%debug%"=="1" (
                 rem admin requested
             ) else (
                 echo [powershell] : Requesting admin rights . . .
-                powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/k \"\"%~f0\" admin hidden\"' -Verb RunAs"
+                powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin hidden\"' -Verb RunAs"
                 exit
             )
         )
@@ -395,6 +401,16 @@ goto :close
 
 
 
+:run_async
+::exmpl
+::call :run_async "Tools\Launcher.exe"
+set "exe=%~1"
+set "args=%~2"
+start "" "%exe%" %args%
+exit /b
+
+
+
 :cpu-priority
 cd /d "%~dp0"
 
@@ -445,32 +461,51 @@ if "%game%"=="Warframe" (
 set cpu-args="!cpu-arg1!" "!cpu-arg2!" "!cpu-arg3!"
 
 echo.&echo Starting '%cpu-priority-ps1%' script
-if not exist "%cpu-priority-ps1%" (
+call :start-pwsh "%cpu-priority-ps1%" !cpu-args!
+exit /b
+
+
+
+:autorestart_scrobbler
+if "%game%" neq "Warframe" (
+    echo [ERROR] Any game instead of Warframe is not supported by the 'autorestart_scrobbler' at this time
+    exit /b
+)
+echo.&echo Starting '%autorestart-ps1%' script
+call :start-pwsh "%autorestart-ps1%" ""
+exit /b
+
+
+
+:start-pwsh
+set script=%~1
+set args=%~2
+
+if not exist "%script%" (
     rem if NOT exist
     if "%debug%"=="1" (
         echo.
-        echo [101;93m "!cpu-priority-ps1!" doesn't exist.
+        echo [101;93m "!script!" doesn't exist.
         echo But this is not a significant error. We have to continue.[0m
-
+        exit /b
     ) else (
-        call :msg "The script """"!cpu-priority-ps1!"""" has not found. Cannot change the cpu priority."
-
+        call :msg "The script """"!script!"""" has not found. Cannot start %script% scanner."
     )
     exit /b
 ) else (
     rem if exist
-    echo Args: !cpu-args!
     if "%debug%"=="1" (
         if "%keep_ps1%"=="1" (
             :: keep the window anyway
-            start powershell.exe -NoProfile -NoExit -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" -WindowStyle Hidden !cpu-args!
+            start powershell.exe -NoProfile -NoExit -ExecutionPolicy Bypass -File "%script%" -Verb RunAs !args!
         ) else (
             :: keep the normal window until script is done
-            start /min powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" !cpu-args!
+            start /min powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%script%" -Verb RunAs !args!
         )
     ) else (
-        :: start the script silently
-        powershell -ExecutionPolicy Bypass -File "%cpu-priority-ps1%" -WindowStyle Hidden !cpu-args!
+        :: start the script silently, but wait for completion
+        rem powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%script%" -Verb RunAs
+        start /min powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%script%" -Verb RunAs !args!
     )
 )
 exit /b

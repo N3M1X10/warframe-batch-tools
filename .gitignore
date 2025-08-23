@@ -1,2 +1,3 @@
 /src/.own
 src/net/warp-generator/portcheck/connections.txt
+src/quick-restart/bin/powershell/autorestart/autorestart-scrobbler.log
