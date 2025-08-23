@@ -1,4 +1,5 @@
 ### 📕readme.md
+> [**`readme-en.md`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/readme-en.md)
 
 <!-- <p align="left">
    <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/warframe/readme.md">
