@@ -1,5 +1,5 @@
 ### 📕readme.md
-> [**`readme-en.md`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/readme-en.md)
+> [**`Bring me to the readme-en.md`**](https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/readme-en.md)
 
 <!-- <p align="left">
    <a href="https://github.com/N3M1X10/warframe-batch-tools/blob/master/src/quick-restart/warframe/readme.md">
@@ -87,20 +87,10 @@
 >>- **`src\quick-restart\bin\powershell\autorestart\autorestart-scrobbler.ps1`** - Powershell-скрипт авторестартер, с параметрами для Warframe
 >>  * **`src\quick-restart\bin\powershell\autorestart\autorestart-scrobbler.bat`** - Пакетный скрипт для ручного запуска, с параметрами для Warframe
 >
-> У этого скрипта включено логирование. В его директории будет создаваться файл лога. 
->Пока это экспериментальная функция, поэтому не вижу смысла отключать это. 
->Так будет проще искать ошибки.
+>> У этого скрипта включено логирование. В его директории будет создаваться файл лога. 
+>> Пока это экспериментальная функция, поэтому не вижу смысла отключать это. 
+>> Так будет проще искать ошибки.
 
-### 🔵AlecaFrame
-> [!warning]
-> - **`start-Aleca-Frame.bat`** - Запустить AlecaFrame
->> Укажите свой путь к Overwolf перед запуском этого файла!
->> Пример:
->> ```bat
->> set overwolf=C:\Program Files\overwolf
->> ```
-
-- **`kill-overwolf.bat`** - Закрыть Overwolf
 
 ### ❌Shutdown
 - **`bin\kill\kill-warframe-and-overwolf.bat`** - Закрыть Warframe и Overwolf
