@@ -1,8 +1,35 @@
+
+# important notes
+Write-Host "Heya!" -Fore Cyan
+Write-Host "If you see me, then i ask you to read this:" -Fore Cyan
+Write-Host ""
+Write-Host "* Please, DO NOT close the main script window!" -Fore Red
+Write-Host "* It may cause to stuck the async script workers, like 'scrobbler' and 'autocloser'" -Fore Yellow
+Write-Host "* They will remain unfinished in the background." -Fore Yellow
+Write-Host "* Cause the script is designed for background work." -Fore Yellow
+Write-Host ""
+Write-Host "If you want to close the script:" -Fore Cyan
+Write-Host "* Using a command" -Fore Green
+Write-Host "1. You need to write a user command (like '_stop-ars') in the invitations menu inside the game." -Fore DarkGreen
+Write-Host "2. Then you need re-entering invitations menu for a few times. It will trigger game-log to write this message for me." -Fore DarkGreen
+Write-Host "or" -Fore Yellow
+Write-Host "* You can just logout the game" -Fore Green
+Write-Host ""
+Write-Host "Then the script will being correctly closed automatically" -Fore Yellow
+Write-Host ""
+
+# read-host "1"
+# exit
+
+
 # Params
 $global:myScriptName = $($MyInvocation.MyCommand.Name.Trim())
 $scriptPath = $PSScriptRoot
 
 $global:ownLogPath = Join-Path -Path $scriptPath -ChildPath "autorestart-scrobbler.log"
+
+$GameProcName = "Warframe.x64"
+$ClientProcName = "Warframe Launcher"
 
 $restarterPath = Resolve-Path -Path "$scriptPath\..\..\.."
 $restart_warframe_script = "restart-warframe-united.bat"
@@ -22,25 +49,25 @@ $ScrobblerJobArgs_exceptionStrings = @(
     'IRC'
 )
 
-$GameProcName = "Warframe.x64"
-$ClientProcName = "Warframe Launcher"
+$global:enableLogging = 1
 
-function global:Write-Log {
+function Write-Log {
     param (
         [string]$Message
     )
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $logMessage = "[$timestamp] $Message"
-    $logMessage | Out-File -FilePath $global:ownLogPath -Append -Encoding utf8
+    $logMessage = "[$timestamp] [MASTER] $Message"
+    if ($global:enableLogging -eq 1) {
+        $logMessage | Out-File -FilePath $global:ownLogPath -Append -Encoding utf8
+    }
 }
-
 
 
 function interrupt {
     param (
         $msg = "Some Error"
         )
-    Write-Host $msg -foregroundcolor red
+    Write-Host $msg -Fore red
     Write-Log $msg
     exit
 }
@@ -48,12 +75,14 @@ function interrupt {
 # starting bell
 # [console]::beep(1600,200)
 # [console]::beep(1600,200)
-Write-Log ""
-Write-Log "[MASTER] Script started"
 
+Write-Host "Script started" -Fore Cyan
+
+Write-Log ""
+Write-Log "Script started"
 
 if (-not (Test-Path $restart_warframe_batch_path)) {
-    Write-Host "Batch file not found: $restart_warframe_batch_path" -ForegroundColor Red
+    Write-Host "Batch file not found: $restart_warframe_batch_path" -Fore Red
     interrupt("Batch file $restart_warframe not found. Expected path: '$restart_warframe_batch_path'. Script autorestarter was interrupted.")
 }
 
@@ -72,8 +101,10 @@ function StartAutoCloser {
                 [string]$Message
             )
             $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-            $logMessage = "[$timestamp] $Message"
-            $logMessage | Out-File -FilePath $using:ownLogPath -Append -Encoding utf8
+            $logMessage = "[$timestamp] [AUTOCLOSER] $Message"
+            if ($using:enableLogging -eq 1) {
+                $logMessage | Out-File -FilePath $using:ownLogPath -Append -Encoding utf8
+            }
         }
 
         function FindLauncher {
@@ -86,7 +117,9 @@ function StartAutoCloser {
                     }
                 }
             }
-            catch {}
+            catch {
+                # Write-Log "Error while searching for launcher: $_"
+            }
             return $false
         }
 
@@ -96,13 +129,12 @@ function StartAutoCloser {
             $GameProc = Get-Process -Name $GameProcName -ErrorAction SilentlyContinue
             # Write-Log "Launcher: $HasLauncher, Game: $($GameProc -ne $null)"
         } while ($HasLauncher -or $GameProc)
-        Write-Log "[AUTOCLOSER] No launcher or game found. Exiting..."
+        Write-Log "No launcher or game found. Exiting..."
         exit
     } -ArgumentList $GameProcName, $ClientProcName
+    Write-Host "Started autoexit scanner..." -Fore Cyan
+    Write-Log "Started autoexit scanner..."
     return $autocloser_job
-
-    Write-Host "Started autoexit scanner..." -ForegroundColor Cyan
-    Write-Log "[MASTER] Started autoexit scanner..."
 }
 
 
@@ -120,15 +152,17 @@ function StartScrobbler {
                 [string]$Message
             )
             $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-            $logMessage = "[$timestamp] $Message"
-            $logMessage | Out-File -FilePath $using:ownLogPath -Append -Encoding utf8
+            $logMessage = "[$timestamp] [SCROBBLER] $Message"
+            if ($using:enableLogging -eq 1) {
+                $logMessage | Out-File -FilePath $using:ownLogPath -Append -Encoding utf8
+            }
         }
 
         # check ee log
         $logPath = "$env:LOCALAPPDATA\Warframe\EE.log"
         if (-not (Test-Path $logPath)) {
-            Write-Log "[SCROBBLER] Log file not found: $logPath"
-            Write-Log "[SCROBBLER] Scrobbler was interrupted"
+            Write-Log "Log file not found: $logPath"
+            Write-Log "Scrobbler was interrupted"
             exit
         }
 
@@ -146,34 +180,36 @@ function StartScrobbler {
                     ($logresult -match '_stop-ars') -or
                     ($logresult -match '_cancel-ars')
                 ) {
-                    Write-Log "[SCROBBLER] Found the user command to stop the Scrobbler"
-                    Write-Log "[SCROBBLER] This line: $logresult"
-                    msg * "[$using:myScriptName] Found the user command to stop the Scrobbler"
+                    Write-Log "[IT MATCHES] Found the user command to stop the Scrobbler"
+                    Write-Log "[IT MATCHES] This line: $logresult"
                     $shouldInterrupt = $true
+
+                    msg * "[$using:myScriptName] Found the user command to stop the Scrobbler. Script was interrupted"
                 }
                 ## restart the game
                 if (
                     ($logresult -match '_reboot') -or
                     ($logresult -match '_restart')
                 ) {
-                    Write-Log "[SCROBBLER][IT MATCHES] I have found the user command to restart the game in the log!"
-                    Write-Log "[SCROBBLER][IT MATCHES] This line: '$logresult'"
+                    Write-Log "[IT MATCHES] I have found the user command to restart the game"
+                    Write-Log "[IT MATCHES] This line: '$logresult'"
                     $shouldRestart = $true
                 }
             }
 
             # checking the target strings in log
             foreach ($target_string in $target_strings) {
-                ## Write-Log "[SCROBBLER] Matching: '$target_string' in target_strings"
+                ## Write-Log "Matching: '$target_string' in target_strings"
                 if ($logresult -match $target_string) {
-                    Write-Log "[SCROBBLER] I have found the target string in the log!"
-                    Write-Log "[SCROBBLER] This line: $logresult"
+                    Write-Log "I have found the target string in the log!"
+                    Write-Log "Target: $target_string"
+                    Write-Log "In this line: $logresult"
                     $shouldRestart = $true
                     ## Exceptions checking
                     foreach ($exception_string in $exception_strings) {
                         if ($logresult -match $exception_string) {
-                            Write-Log "[SCROBBLER][WARNING] But this is a string that contains: '$exception_string' exception"
-                            Write-Log "[SCROBBLER] The restarting has been canceled"
+                            Write-Log "[WARNING] But this is a string that contains: '$exception_string' exception"
+                            Write-Log "The restarting has been canceled"
                             $shouldRestart = $false
                         }
                     }
@@ -183,23 +219,23 @@ function StartScrobbler {
             # final checks
             if ($shouldRestart) {
                 Write-Log ""
-                Write-Log "[SCROBBLER][IT MATCHES] !!!!! I HAVE FOUND THE TARGET LINE !!!!!"
-                Write-Log "[SCROBBLER][IT MATCHES] This line: $logresult"
+                Write-Log "[IT MATCHES] I HAVE FOUND THE TARGET LINE"
+                Write-Log "[IT MATCHES] This line: $logresult"
                 Write-Log ""
-                Write-Log "[SCROBBLER] I'm gonna restarting the game. Starting: '$restart_warframe_batch_path'"
+                Write-Log "I'm gonna restarting the game. Starting: '$restart_warframe_batch_path'"
                 Start-Process -FilePath $restart_warframe_batch_path -Verb RunAs
                 $shouldInterrupt = $true
             }
 
             if ($shouldInterrupt) {
-                Write-Log "[SCROBBLER] Scrobbler was interrupted"
+                Write-Log "Scrobbler was interrupted"
                 exit
             }
         }
     } -ArgumentList $restart_warframe_batch_path, @($ScrobblerJobArgs_targetStrings), @($ScrobblerJobArgs_exceptionStrings)  # Передаем первые три элемента как массив строк и последний как путь к батнику
 
-    Write-Host 'Started Host Migration scanner for auto restart the game...' -Foregroundcolor Cyan
-    Write-Log '[MASTER] Started Host Migration scanner for auto restart the game...'
+    Write-Host 'Started Host migration scrobbler for auto restart the game...' -Fore Cyan
+    Write-Log 'Started Host Migration scrobbler for auto restart the game...'
     return $scrobbler_job
 }
 
@@ -211,10 +247,10 @@ function JobsCycle {
             $autocloser_jobstate = (Get-Job -Id $autocloser_job.Id -ErrorAction Stop).State
             $scrobbler_jobstate = (Get-Job -Id $scrobbler_job.Id -ErrorAction Stop).State
 
-            # Write-Log "[MASTER] AutoCloser: $autocloser_jobstate, Scrobbler: $scrobbler_jobstate"
+            # Write-Log "AutoCloser: $autocloser_jobstate, Scrobbler: $scrobbler_jobstate"
 
             if ($autocloser_jobstate -eq 'Completed' -or $scrobbler_jobstate -eq 'Completed') {
-                Write-Log "[MASTER] One of the jobs has completed. Stopping jobs..."
+                Write-Log "One of the jobs has completed. Stopping jobs..."
                 Stop-Job $scrobbler_job -ErrorAction SilentlyContinue
                 Stop-Job $autocloser_job -ErrorAction SilentlyContinue
                 Remove-Job $scrobbler_job -ErrorAction SilentlyContinue
@@ -225,11 +261,11 @@ function JobsCycle {
         }
     }
     catch {
-        Write-Host "ERROR: $_" -ForegroundColor Red
-        Write-Log "[MASTER] ERROR: $_"
+        Write-Host "ERROR: $_" -Fore Red
+        Write-Log "ERROR: $_"
     }
-    Write-Host "Jobs completed. Main script exiting..." -ForegroundColor Green
-    Write-Log "[MASTER] Jobs completed. Main script exiting..."
+    Write-Host "Jobs completed. Main script exiting..." -Fore Green
+    Write-Log "Jobs completed. Main script exiting..."
     # [console]::beep(400,600)
     exit
 }
@@ -238,3 +274,4 @@ function JobsCycle {
 $scrobbler_job = StartScrobbler
 $autocloser_job = StartAutoCloser
 JobsCycle -scrobbler_job $scrobbler_job -autocloser_job $autocloser_job
+

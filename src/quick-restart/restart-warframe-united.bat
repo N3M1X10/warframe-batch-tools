@@ -503,7 +503,7 @@ if not exist "%script%" (
             start /min powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%script%" -Verb RunAs !args!
         )
     ) else (
-        :: start the script silently, but wait for completion
+        :: start the script silently
         rem powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%script%" -Verb RunAs
         start /min powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%script%" -Verb RunAs !args!
     )
