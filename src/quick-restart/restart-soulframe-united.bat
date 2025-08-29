@@ -6,10 +6,15 @@ setlocal EnableDelayedExpansion
 :: If you don't know what they mean - check readme's
 :: Script source: https://github.com/N3M1X10/warframe-batch-tools
 
+:: Sets the launch arguments which suppose to make game process more faster and stable
+:: possible: [1 / any else val]
+:: default: ''
+set maximize_perfomance=
+
 :: Change CPU Priority on Launch
-:: possible: [1 / 0]
-:: default: '0'
-set change_priority=0
+:: possible: [1 / any else val]
+:: default: ''
+set change_priority=
 :: Change CPU Priority on Launch
 :: - Possible values: ["low", "BelowNormal", "normal", "AboveNormal", "high", "realtime"]
 :: - Default: normal
@@ -20,16 +25,16 @@ set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
 
 :: Start Scrobbler-Autorestarter
 :: possible: [1 / any else val]
-:: default: '0'
-set autorestart_scrobbler=0
+:: default: ''
+set autorestart_scrobbler=
 :: ps1 script autorestart path
 :: required to correctly setup this var for option below
 set autorestart-ps1=%~dp0bin\powershell\autorestart\autorestart-scrobbler.ps1
 
 :: Sets that you need to make sure that all Steam processes is terminated or terminate them before launching Warframe
 :: [1 / any else val]
-:: default: '0'
-set terminate_steam=0
+:: default: ''
+set terminate_steam=
 
 :: if 'steam' the script will try launch game through steam
 :: ['steam' / any else val]
@@ -44,12 +49,8 @@ set steam_warframe_path=
 :: [1 / any else val]
 :: And if your 'launch_type' is 'steam' then with this option - you need to setup 'steam_warframe_path' above
 :: 1 - if you don't wanna wake up the Steam
-:: default: '0'
-set without_waking_up_steam=0
-
-:: sets whether the window will be hidden
-:: default: '1'
-set windowless=1
+:: default: ''
+set without_waking_up_steam=
 
 
 :Dev-Params
@@ -68,13 +69,17 @@ set game=2
 
 ::debug mode (only for devs)
 :: [1 / any else val]
-::default: '0'
-set debug=0
+::default: ''
+set debug=
 
 :: cpu-priority window mode switcher
 :: [1 / any else val]
 :: default: '0'
-set keep_ps1=0
+set keep_ps1=
+
+:: sets whether the window will be hidden
+:: default: '1'
+set windowless=1
 
 :: this option will set this script to request admin rights
 :: [1 / any else val]
@@ -99,9 +104,20 @@ set "hdn_arg=%2"
 
 :Start-Of-Application-Body
 
+
+:setup-script
 call :request-admin-rights
 call :check-game-parameter
 title Restart %game% (United)
+
+
+:setup-game-args
+if "%maximize_perfomance%"=="1" (
+    set "game_launch_args=-dx11 -nod3d9ex -high -NOINTRO -threadedworker:1 -USEALLCORES"
+    echo [93mI have set the game 'args=%game_launch_args%'. 
+    echo [93mThe game will be launched with the 'maximize_perfomance' arguments
+)
+
 
 :kill-steam
 if "%terminate_steam%"=="1" (
@@ -132,20 +148,20 @@ echo Done
 
 :start-game
 if "%game%"=="Warframe" (
-    :: Starting warframe
+    :: Warframe
     if "%launch_type%"=="steam" (
-        :: Try to run the game through a steam
+        :: Try to run the game through a Steam
         echo.&echo Trying to run Warframe via Steam
         if "%without_waking_up_steam%"=="1" (
-            :: Run without calling Steam
+            :: Running without calling Steam
             echo.&echo but without waking up the Steam . . .
             call :check-path !steam_warframe_path! game
             cd /d "!steam_warframe_path!"
-            call :run_async "Tools\Launcher.exe" "-cluster:public -registry:Steam"
+            call :run_async "Tools\Launcher.exe" "-cluster:public -registry:Steam %game_launch_args%"
 
         ) else (
-            :: Run wf through steam uri
-            echo.&echo Trying to run Warframe via Steam . . .
+            :: Running through a Steam uri
+            echo.&echo Trying to run Warframe via Steam URI . . .
             explorer "steam://rungameid/230410"
 
         )
@@ -153,19 +169,19 @@ if "%game%"=="Warframe" (
         :: Starting via separated client launcher
         echo.&echo Trying to run Warframe via separated client launcher . . .
         call :check-path !warframe! game
-        call :run_async "Tools\Launcher.exe"
+        call :run_async "Tools\Launcher.exe" "%game_launch_args%"
 
     )
     echo.&echo Warframe is started
 
 ) else if "%game%"=="Soulframe" (
-    rem Starting Soulframe
+    rem Soulframe
     rem Starting via separated client launcher
     echo For now, 'launch_type' is ignored by reason: there's no any else way to launch the game
     echo.&echo Trying to run Soulframe via separated client launcher . . .
     call :check-path !soulframe! game
     cd /d "!soulframe!"
-    call :run_async "Tools\Launcher.exe"
+    call :run_async "Tools\Launcher.exe" "%game_launch_args%"
     echo.&echo Soulframe is started
 
 )
