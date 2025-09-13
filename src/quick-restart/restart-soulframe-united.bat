@@ -7,6 +7,7 @@ setlocal EnableDelayedExpansion
 :: Script source: https://github.com/N3M1X10/warframe-batch-tools
 
 :: Sets the launch arguments which suppose to make game process more faster and stable
+:: Notice: It need you to make sure that you manually set the DirectX version to 11 in Launcher settings menu to take effect !!!
 :: possible: [1 / any else val]
 :: default: ''
 set maximize_perfomance=
@@ -113,7 +114,9 @@ title Restart %game% (United)
 
 :setup-game-args
 if "%maximize_perfomance%"=="1" (
+    ::launch args
     set "game_launch_args=-dx11 -nod3d9ex -high -NOINTRO -threadedworker:1 -USEALLCORES"
+    ::comments
     echo [93mI have set the game 'args=%game_launch_args%'. 
     echo [93mThe game will be launched with the 'maximize_perfomance' arguments
 )
@@ -270,7 +273,7 @@ if "%check-type%"=="game" (
             echo "%checking-path%"[0m
             echo.
             echo Press any key to exit . . .
-            pause>nul
+            >nul timeout /t 60
         ) else (
             if "%checking-path%"=="" (
                 call :msg "Error. %game% path is empty. Please setup it inside this script"
@@ -334,7 +337,9 @@ if "%game%" == "Warframe" (
     if "%debug%"=="1" (
         echo [91mError. Param 'game' is empty[0m
         echo [91mScript is going to be interrupted[0m
-        pause
+
+        echo Press any key to exit . . .
+        >nul timeout /t 60
     ) else (
         call :msg "Error. Param 'game' is incorrect. Script was interrupted"
     )
@@ -346,7 +351,9 @@ if "%game%" == "Warframe" (
     if "%debug%"=="1" (
         echo [91mError. Param 'game' is incorrect[0m
         echo [91mScript is going to be interrupted[0m
-        pause
+
+        echo Press any key to exit . . .
+        >nul timeout /t 60
     ) else (
         call :msg "Error. Param 'game' is incorrect. Script was interrupted"
     )
