@@ -7,7 +7,8 @@ setlocal EnableDelayedExpansion
 :: Script source: https://github.com/N3M1X10/warframe-batch-tools
 
 :: Sets the launch arguments which suppose to make game process more faster and stable
-:: Notice: It need you to make sure that you manually set the DirectX version to 11 in Launcher settings menu to take effect !!!
+:: [Notice]: It need you to make sure that you manually set the DirectX version to 11 in Launcher settings menu to take effect !!!
+:: [Notice2]: (According to my observations) You'd better disable priority change when using this feature
 :: possible: [1 / any else val]
 :: default: ''
 set maximize_perfomance=
