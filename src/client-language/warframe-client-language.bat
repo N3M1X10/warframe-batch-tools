@@ -9,6 +9,8 @@ if "%adm_arg%" neq "admin" (
     exit /b
 )
 
+call :kill-Launcher 
+call :kill-RemoteCrashSender
 
 :ask
 ::menu session setup
@@ -17,6 +19,7 @@ title %~nx0
 endlocal
 setlocal EnableDelayedExpansion
 
+set game=Warframe
 set "REG_PATH=HKCU\Software\Digital Extremes\Warframe\Launcher"
 set "CONFIG_FILE=languages.ini"
 call :save-config
@@ -90,6 +93,8 @@ goto ask
 set "new_lang=%~1"
 set "eula_hash="
 
+call :kill-Launcher 
+call :kill-RemoteCrashSender
 call :read-config
 
 if not defined eula_hash (
@@ -165,6 +170,18 @@ set "data_ko=2122A0E97ABB9C5988CF0E0A9F35F93D"
 set "data_th=61E6578B8059BF9432BC91C58023D2E5"
 exit /b
 
+
+:kill-Launcher
+echo.&echo [93mTrying to terminate the Game Launcher . . .[0m
+powershell -NoLogo -NoProfile -Command "Get-Process Launcher | Where-Object { $path = $_.Path; if ($path.Contains('%game%')) { Write-Host 'Killing Process...'; Stop-Process -Id $_.Id; } }">nul
+echo Done
+exit/b
+
+:kill-RemoteCrashSender
+echo.&echo [93mTrying to terminate the Game Remote Crash Sender . . .[0m
+powershell -NoLogo -NoProfile -Command "Get-Process RemoteCrashSender | Where-Object { $path = $_.Path; if ($path.Contains('%game%')) { Write-Host 'Killing Process...'; Stop-Process -Id $_.Id; } }">nul
+echo Done
+exit/b
 
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
