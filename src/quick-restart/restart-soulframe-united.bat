@@ -6,12 +6,12 @@ setlocal EnableDelayedExpansion
 :: If you don't know what they mean - check readme's
 :: Script source: https://github.com/N3M1X10/warframe-batch-tools
 
-:: Sets the launch arguments which suppose to make game process more faster and stable
+:: Sets the launch arguments which suppose to make game process more enjoyable
 :: [Notice]: It need you to make sure that you manually set the DirectX version to 11 in Launcher settings menu to take effect !!!
 :: [Notice2]: (According to my observations) You'd better disable priority change when using this feature
 :: possible: [1 / any else val]
 :: default: ''
-set maximize_perfomance=
+set launch_tweaks=
 
 :: Change CPU Priority on Launch
 :: possible: [1 / any else val]
@@ -22,7 +22,7 @@ set change_priority=
 :: - Default: normal
 set priority=normal
 :: ps1 script cpu-priority path
-:: required to correctly setup this var for option below
+:: required to correctly setup this var
 set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
 
 :: Start Scrobbler-Autorestarter
@@ -30,7 +30,7 @@ set cpu-priority-ps1=%~dp0bin\powershell\cpu-priority\cpu-priority.ps1
 :: default: ''
 set autorestart_scrobbler=
 :: ps1 script autorestart path
-:: required to correctly setup this var for option below
+:: required to correctly setup this var
 set autorestart-ps1=%~dp0bin\powershell\autorestart\autorestart-scrobbler.ps1
 
 :: Sets that you need to make sure that all Steam processes is terminated or terminate them before launching Warframe
@@ -114,12 +114,12 @@ title Restart %game% (United)
 
 
 :setup-game-args
-if "%maximize_perfomance%"=="1" (
+if "%launch_tweaks%"=="1" (
     ::launch args
-    set "game_launch_args=-dx11 -nod3d9ex -high -NOINTRO -threadedworker:1 -USEALLCORES"
+    set "game_launch_args=-dx11 -high -NOINTRO"
     ::comments
     echo [93mI have set the game 'args=%game_launch_args%'. 
-    echo [93mThe game will be launched with the 'maximize_perfomance' arguments
+    echo [93mThe game will be launched with the 'launch_tweaks' arguments
 )
 
 
